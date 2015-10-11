@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>K-means</title>
+    <link rel="stylesheet" href="./public/css/style.min.css"/>
+</head>
+<body>
+<div class="coordinate">
+</div>
+<div class="ui">
+    <div class="input input_number">
+        <label for="nbPointsModValue">
+            Nb of points
+        </label>
+        <input type="number" class="nbPoints" value="500" id="nbPointsModValue"/>
+    </div>
+    <div class="input input_number">
+        <label for="nbProtosModValue">
+            Nb of protos
+        </label>
+        <input type="number" class="nbProtos" value="5" id="nbProtosModValue"/>
+    </div>
+    <button class="reload" id="reloadButton">Reload</button>
+</div>
+<div class="stats">
+    <div class="kiteratorValue"></div>
+</div>
+
+<!-- WIP : Ajouter boutons pour changer nbPoints, nbProtos-->
+<!-- WIP : Afficher KIterator et les groupes-->
+<!-- WIP : Eviter les couleurs trop similaires. Voir Delta E -->
+<script src="./public/js/global.min.js"></script>
+<script>
+    window.onload = function(){
+        var reloadButton = document.getElementById('reloadButton');
+        var nbPoints = document.getElementById('nbPointsModValue');
+        var nbProtos = document.getElementById('nbProtosModValue');
+        reloadButton.onclick = function(){
+            new KMeans(nbPoints.value, nbProtos.value, true);
+        }
+    };
+</script>
+</body>
+</html>
