@@ -11,7 +11,7 @@ function Color() {
     var getRGB = function () {
         return "rgb(" + this.red + "," + this.green + "," + this.blue + ")";
     };
-    //TODO convert to XYZ and calculate similiarity distance
+    //TODO convert to XYZ and calculate similiarity distance. Just trying
 }
 Color.genRandomColor = function () {
     var red = Math.round(Math.random() * (255));
