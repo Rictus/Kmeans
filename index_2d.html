@@ -38,8 +38,20 @@
         var nbPoints = document.getElementById('nbPointsModValue');
         var nbProtos = document.getElementById('nbProtosModValue');
         var mainParentElement = document.getElementsByClassName('coordinate')[0];
+        var opt = {
+            MIN_X: 0,
+            MAX_X: 600,
+            MIN_Y: 0,
+            MAX_Y: 600,
+            MIN_Z: 0,
+            MAX_Z: 0,
+            NB_POINTS: parseInt(nbPoints.value, 10),
+            NB_PROTOS: parseInt(nbProtos.value, 10),
+            ACTIVE_ANIMATION: true,
+            ACTIVE_3D: false
+        };
         reloadButton.onclick = function () {
-            new KMeans(mainParentElement, nbPoints.value, nbProtos.value, true, false);
+            new KMeans(mainParentElement, opt);
         }
     };
 </script>

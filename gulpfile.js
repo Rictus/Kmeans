@@ -7,7 +7,7 @@ var uglify = require('gulp-uglify');
 var concat = require('gulp-concat');
 var path = require('path');
 
-var dev = false;
+var dev = true;
 
 gulp.task('default', function () {
 });
@@ -25,11 +25,13 @@ var watcherChangeHandler = function (event) {
 /*************************************************/
 
 gulp.task('lessProd', function () {
-    return gulp.src("./dev/css/**/*.less")
+    var curPipe = gulp.src("./dev/css/**/*.less")
         .pipe(less())
-        .pipe(autoprefixer('> 1%'))
-        .pipe(minify())
-        .pipe(rename({extname: '.min.css'}))
+        .pipe(autoprefixer('> 1%'));
+    if (!dev) {
+        curPipe = curPipe.pipe(minify());
+    }
+    curPipe.pipe(rename({extname: '.min.css'}))
         .pipe(gulp.dest("./public/css/"));
 });
 

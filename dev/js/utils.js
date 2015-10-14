@@ -1,4 +1,4 @@
-
+"use strict";
 function createCompleteElement(elemName, classNames, ids, attributes, textNode) {//Create element
     var el = document.createElement((elemName) ? elemName : 'div');
     //adding classname(s)

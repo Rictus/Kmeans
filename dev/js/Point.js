@@ -1,10 +1,31 @@
 /**
- * OK Heritage de Point dans Proto : ok.
- * Mtn : refactorer le code de Proto pour le diminuer
  * @param positionObject
  * @constructor
  */
+"use strict";
 
+
+
+var update2DPosition = function (element, positionObject) {
+    element.style.bottom = positionObject.y + "px";
+    element.style.left = positionObject.x + "px";
+};
+
+var update3DPosition = function (element, positionObject) {
+    var xIndex = 12;
+    var yIndex = 13;
+    var zIndex = 14;
+    var computedStyle = getComputedStyle(element);
+    var computedTransform = computedStyle.transform;
+    var matrixValues = computedTransform.substring(9, computedTransform.length - 1).split(", ");
+    for (var i = 0; i < matrixValues.length; i++) {
+        matrixValues[i] = parseInt(matrixValues[i], 10);
+    }
+    matrixValues[xIndex] = positionObject.x;
+    matrixValues[yIndex] = positionObject.y;
+    matrixValues[zIndex] = Options.MAX_Z / -2 + positionObject.z;
+    element.style.transformPolyfill("matrix3d(" + matrixValues.join(", ") + ")");
+};
 function Point(positionObject) {
     var that = this;
     this.x = 0;
@@ -12,32 +33,15 @@ function Point(positionObject) {
     this.z = 0;
     this.HTMLElement = null;
 
-    var buildPoint = function (x, y, z) {
-        //If no coords given : default
-        x = typeof x !== "number" ? that.x : x;
-        y = typeof y !== "number" ? that.y : y;
-        z = typeof z !== "number" ? that.z : z;
-
-        that.HTMLElement = createCompleteElement('div', ['point'], [], [['x', x], ['y', y], ['z', z]]);
-        //that.HTMLElement.style.left = x + "px";
-        //that.HTMLElement.style.bottom = y + "px";
-        //TODO how to do for z coord ? Solution : Get the current transformation value, add Z translation
+    var buildPoint = function () {
+        that.HTMLElement = createCompleteElement('div', ['point'], [], [['x', that.x], ['y', that.y], ['z', that.z]]);
     };
-    this.updatePosition = function () {
 
-        var xIndex = 12;
-        var yIndex = 13;
-        var zIndex = 14;
-        var computedStyle = getComputedStyle(that.HTMLElement);
-        var computedTransform = computedStyle.transform;
-        var matrixValues = computedTransform.substring(9, computedTransform.length - 1).split(", ");
-        for (var i = 0; i < matrixValues.length; i++) {
-            matrixValues[i] = parseInt(matrixValues[i], 10);
-        }
-        matrixValues[xIndex] = that.x;
-        matrixValues[yIndex] = that.y;
-        matrixValues[zIndex] = Constants.MAX_Z/-2 + that.z;
-        that.HTMLElement.style.transform = "matrix3d(" + matrixValues.join(", ") + ")";
+    this.updatePosition = function () {
+        if (Options.ACTIVE_3D)
+            update3DPosition(that.HTMLElement, that);
+        else
+            update2DPosition(that.HTMLElement, that);
     };
     this.updateColor = function (newColor) {
         that.HTMLElement.style.backgroundColor = newColor;
@@ -93,39 +97,27 @@ extendClass(Proto, Point);
 
 function Proto(positionObject, groupColor) {
     var that = this;
+    that.HTMLElement = null;
     var membership = [];
     var protoPositionMean = {
         x: 0, y: 0, z: 0
     };
     this.membershipColor = typeof groupColor === "undefined" ? "rgba(255,0,0,1)" : groupColor;
-    that.HTMLElement;
 
 
-    var buildProto = function (x, y, z) {
-        //If no coords given : default
-        x = typeof x === "number" ? x : that.x;
-        y = typeof y === "number" ? y : that.y;
-        z = typeof z === "number" ? z : that.z;
 
-        that.HTMLElement = createCompleteElement('div', ['proto'], [], [['x', x], ['y', y], ['z', z]]);
+    var buildProto = function () {
+        that.HTMLElement = createCompleteElement('div', ['proto'], [], [['x', that.x], ['y', that.y], ['z', that.z]]);
         that.updatePosition();
         that.updateColor(that.membershipColor);
     };
     this.updatePosition = function () {
-        var xIndex = 12;
-        var yIndex = 13;
-        var zIndex = 14;
-        var computedStyle = getComputedStyle(that.HTMLElement);
-        var computedTransform = computedStyle.transform;
-        var matrixValues = computedTransform.substring(9, computedTransform.length - 1).split(", ");
-        for (var i = 0; i < matrixValues.length; i++) {
-            matrixValues[i] = parseInt(matrixValues[i], 10);
-        }
-        matrixValues[xIndex] = that.x;
-        matrixValues[yIndex] = that.y;
-        matrixValues[zIndex] = -150 + that.z;
-        that.HTMLElement.style.transform = "matrix3d(" + matrixValues.join(", ") + ")";
+        if (Options.ACTIVE_3D)
+            update3DPosition(that.HTMLElement, that);
+        else
+            update2DPosition(that.HTMLElement, that);
     };
+
     this.calculMeanMembership = function () {
         var moveDistance = 0;
         protoPositionMean.x = 0;
@@ -141,7 +133,7 @@ function Proto(positionObject, groupColor) {
             protoPositionMean.x /= membership.length;
             protoPositionMean.y /= membership.length;
             protoPositionMean.z /= membership.length;
-            moveDistance = Point.distanceTwoPoints(that.x, that.y, protoPositionMean.x, protoPositionMean.y);
+            moveDistance = Point.distanceTwoPoints(that, protoPositionMean);
             that.x = protoPositionMean.x;
             that.y = protoPositionMean.y;
             that.z = protoPositionMean.z;

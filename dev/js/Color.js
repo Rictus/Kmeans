@@ -1,3 +1,4 @@
+"use strict";
 function Color() {
     var red = "";
     var green = "";
@@ -13,9 +14,9 @@ function Color() {
     //TODO convert to XYZ and calculate similiarity distance
 }
 Color.genRandomColor = function () {
-    red = Math.round(Math.random() * (255));
-    green = Math.round(Math.random() * (255));
-    blue = Math.round(Math.random() * (255));
-    opacity = 1;
+    var red = Math.round(Math.random() * (255));
+    var green = Math.round(Math.random() * (255));
+    var blue = Math.round(Math.random() * (255));
+    var opacity = 1;
     return "rgba(" + red + "," + green + "," + blue + "," + opacity + ")";
 };

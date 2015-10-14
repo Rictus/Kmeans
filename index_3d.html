@@ -23,13 +23,20 @@
 <script src="./public/js/global.min.js"></script>
 <script>
     window.onload = function () {
-//        var reloadButton = document.getElementById('reloadButton');
-//        var nbPoints = document.getElementById('nbPointsModValue');
-//        var nbProtos = document.getElementById('nbProtosModValue');
-//        reloadButton.onclick = function () {
         var mainParentElement = document.getElementsByClassName('cube')[0];
-            new KMeans(mainParentElement,300, 5, true);
-//        }
+        var opt = {
+            MIN_X: 0,
+            MAX_X: 380,
+            MIN_Y: 0,
+            MAX_Y: 380,
+            MIN_Z: 0,
+            MAX_Z: 380,
+            NB_POINTS: 200,
+            NB_PROTOS: 5,
+            ACTIVE_ANIMATION: true,
+            ACTIVE_3D: true
+        };
+        new KMeans(mainParentElement, opt);
     };
 </script>
 </body>

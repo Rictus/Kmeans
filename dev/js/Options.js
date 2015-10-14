@@ -1,4 +1,4 @@
-var Constants = {
+var Options = {
     MIN_X: 0,
     MAX_X: 380,
     MIN_Y: 0,
@@ -6,5 +6,7 @@ var Constants = {
     MIN_Z: 0,
     MAX_Z: 380,
     NB_POINTS: 200,
-    NB_PROTOS: 5
+    NB_PROTOS: 5,
+    ACTIVE_ANIMATION: true,
+    ACTIVE_3D: true
 };

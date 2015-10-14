@@ -1,16 +1,15 @@
-function Coordinate(mainParentElement, nbPoints, nbProtos, active3d) {
-
-    active3d = typeof active3d === "boolean" ? active3d : false;
+"use strict";
+function Coordinate(mainParentElement) {
     this.HTMLElement = mainParentElement;
     var that = this;
-    this.MIN_X = Constants.MIN_X;
-    this.MAX_X = Constants.MAX_X;
-    this.MIN_Y = Constants.MIN_Y;
-    this.MAX_Y = Constants.MAX_Y;
-    this.MIN_Z = Constants.MIN_Z;
-    this.MAX_Z = Constants.MAX_Z;
-    this.NB_POINTS = typeof nbPoints !== "undefined" && typeof parseInt(nbPoints) === "number" ? parseInt(nbPoints) : Constants.NB_POINTS;
-    this.NB_PROTOS = typeof nbProtos !== "undefined" && typeof parseInt(nbProtos) === "number" ? parseInt(nbProtos) : Constants.NB_PROTOS;
+    this.MIN_X = Options.MIN_X;
+    this.MAX_X = Options.MAX_X;
+    this.MIN_Y = Options.MIN_Y;
+    this.MAX_Y = Options.MAX_Y;
+    this.MIN_Z = Options.ACTIVE_3D ? Options.MIN_Z : 0;
+    this.MAX_Z = Options.ACTIVE_3D ? Options.MAX_Z : 0;
+    this.NB_POINTS = typeof nbPoints !== "undefined" && typeof parseInt(nbPoints) === "number" ? parseInt(nbPoints) : Options.NB_POINTS;
+    this.NB_PROTOS = typeof nbProtos !== "undefined" && typeof parseInt(nbProtos) === "number" ? parseInt(nbProtos) : Options.NB_PROTOS;
     //Static values
     this.points = [];
     this.protos = [];
@@ -45,7 +44,7 @@ function Coordinate(mainParentElement, nbPoints, nbProtos, active3d) {
         var newPoint;
         var newProto;
         //Creating randomly positionned points, adding to array and to HTML
-        for (i = 0; i < that.NB_POINTS; i++) {
+        for (var i = 0; i < that.NB_POINTS; i++) {
             givenRandomCoord = that.getRandomCoords();
 
             newPoint = new Point(givenRandomCoord);
