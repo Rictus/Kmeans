@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>K-means</title>
+    <link rel="stylesheet" href="./public/css/style.min.css"/>
+</head>
+<body>
+<div class="threeDimensions">
+    <div class="wrap">
+        <div class="cube">
+            <div class="face front"></div>
+            <div class="face back"></div>
+            <div class="face top"></div>
+            <div class="face bottom"></div>
+            <div class="face left"></div>
+            <div class="face right"></div>
+        </div>
+    </div>
+
+</div>
+
+<script src="./public/js/global.min.js"></script>
+<script>
+    window.onload = function () {
+//        var reloadButton = document.getElementById('reloadButton');
+//        var nbPoints = document.getElementById('nbPointsModValue');
+//        var nbProtos = document.getElementById('nbProtosModValue');
+//        reloadButton.onclick = function () {
+        var mainParentElement = document.getElementsByClassName('cube')[0];
+            new KMeans(mainParentElement,300, 5, true);
+//        }
+    };
+</script>
+</body>
+</html>

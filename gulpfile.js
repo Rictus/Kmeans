@@ -7,7 +7,7 @@ var uglify = require('gulp-uglify');
 var concat = require('gulp-concat');
 var path = require('path');
 
-var dev = true;
+var dev = false;
 
 gulp.task('default', function () {
 });

@@ -1,15 +1,16 @@
-function Coordinate(nbPoints, nbProtos) {
-    this.HTMLElement = document.getElementsByClassName('coordinate')[0];
+function Coordinate(mainParentElement, nbPoints, nbProtos, active3d) {
+
+    active3d = typeof active3d === "boolean" ? active3d : false;
+    this.HTMLElement = mainParentElement;
     var that = this;
-    this.MAX_X = this.HTMLElement.clientWidth;
-    this.MIN_X = 0;
-    this.MAX_Y = this.HTMLElement.clientHeight;
-    this.MIN_Y = 0;
-    this.MIN_Z = 0;
-    this.MAX_Z = 0; //TODO I could change bcs height for Z isn't rly correct
-    this.NB_POINTS = typeof nbPoints !== "undefined" && typeof parseInt(nbPoints) === "number" ? parseInt(nbPoints) : 10;
-    this.NB_PROTOS = typeof nbProtos !== "undefined" && typeof parseInt(nbProtos) === "number" ? parseInt(nbProtos) : 2;
-    this.MAX_VALUE = this.MAX_X * this.MAX_Y;
+    this.MIN_X = Constants.MIN_X;
+    this.MAX_X = Constants.MAX_X;
+    this.MIN_Y = Constants.MIN_Y;
+    this.MAX_Y = Constants.MAX_Y;
+    this.MIN_Z = Constants.MIN_Z;
+    this.MAX_Z = Constants.MAX_Z;
+    this.NB_POINTS = typeof nbPoints !== "undefined" && typeof parseInt(nbPoints) === "number" ? parseInt(nbPoints) : Constants.NB_POINTS;
+    this.NB_PROTOS = typeof nbProtos !== "undefined" && typeof parseInt(nbProtos) === "number" ? parseInt(nbProtos) : Constants.NB_PROTOS;
     //Static values
     this.points = [];
     this.protos = [];
@@ -37,7 +38,7 @@ function Coordinate(nbPoints, nbProtos) {
     };
 
     this.init = function () {
-        that.HTMLElement.innerHTML = "";
+        //that.HTMLElement.innerHTML = "";
         that.points = [];
         that.protos = [];
         var givenRandomCoord;
@@ -46,9 +47,11 @@ function Coordinate(nbPoints, nbProtos) {
         //Creating randomly positionned points, adding to array and to HTML
         for (i = 0; i < that.NB_POINTS; i++) {
             givenRandomCoord = that.getRandomCoords();
+
             newPoint = new Point(givenRandomCoord);
             that.points.push(newPoint);
             that.HTMLElement.appendChild(newPoint.HTMLElement);
+            newPoint.updatePosition();
         }
         //Creating randomly positionned protos, adding to array and to HTML,
         for (var j = 0; j < that.NB_PROTOS; j++) {
@@ -56,6 +59,7 @@ function Coordinate(nbPoints, nbProtos) {
             newProto = new Proto(givenRandomCoord, Color.genRandomColor());
             that.protos.push(newProto);
             that.HTMLElement.appendChild(newProto.HTMLElement);
+            newProto.updatePosition();
         }
     };
     this.init();

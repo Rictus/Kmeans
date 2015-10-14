@@ -19,11 +19,27 @@ function Point(positionObject) {
         z = typeof z !== "number" ? that.z : z;
 
         that.HTMLElement = createCompleteElement('div', ['point'], [], [['x', x], ['y', y], ['z', z]]);
-        that.HTMLElement.style.left = x + "px";
-        that.HTMLElement.style.bottom = y + "px";
+        //that.HTMLElement.style.left = x + "px";
+        //that.HTMLElement.style.bottom = y + "px";
         //TODO how to do for z coord ? Solution : Get the current transformation value, add Z translation
     };
-    this.changeColor = function (newColor) {
+    this.updatePosition = function () {
+
+        var xIndex = 12;
+        var yIndex = 13;
+        var zIndex = 14;
+        var computedStyle = getComputedStyle(that.HTMLElement);
+        var computedTransform = computedStyle.transform;
+        var matrixValues = computedTransform.substring(9, computedTransform.length - 1).split(", ");
+        for (var i = 0; i < matrixValues.length; i++) {
+            matrixValues[i] = parseInt(matrixValues[i], 10);
+        }
+        matrixValues[xIndex] = that.x;
+        matrixValues[yIndex] = that.y;
+        matrixValues[zIndex] = Constants.MAX_Z/-2 + that.z;
+        that.HTMLElement.style.transform = "matrix3d(" + matrixValues.join(", ") + ")";
+    };
+    this.updateColor = function (newColor) {
         that.HTMLElement.style.backgroundColor = newColor;
     };
 
@@ -33,7 +49,7 @@ function Point(positionObject) {
     buildPoint();
 }
 
-Point.distanceTwoPoints = function (coordObjectFirstPoint, coordObjectSecondPoint) { //Hey parmas in this function has changed so beware of erors
+Point.distanceTwoPoints = function (coordObjectFirstPoint, coordObjectSecondPoint) { //Hey params in this function has changed so beware of erors
     var xPow = Math.pow(coordObjectFirstPoint.x - coordObjectSecondPoint.x, 2);
     var yPow = Math.pow(coordObjectFirstPoint.y - coordObjectSecondPoint.y, 2);
     var zPow = Math.pow(coordObjectFirstPoint.z - coordObjectSecondPoint.z, 2);
@@ -92,10 +108,24 @@ function Proto(positionObject, groupColor) {
         z = typeof z === "number" ? z : that.z;
 
         that.HTMLElement = createCompleteElement('div', ['proto'], [], [['x', x], ['y', y], ['z', z]]);
-        that.updateHTMLPosition();
-        that.HTMLElement.style.backgroundColor = that.membershipColor;
+        that.updatePosition();
+        that.updateColor(that.membershipColor);
     };
-
+    this.updatePosition = function () {
+        var xIndex = 12;
+        var yIndex = 13;
+        var zIndex = 14;
+        var computedStyle = getComputedStyle(that.HTMLElement);
+        var computedTransform = computedStyle.transform;
+        var matrixValues = computedTransform.substring(9, computedTransform.length - 1).split(", ");
+        for (var i = 0; i < matrixValues.length; i++) {
+            matrixValues[i] = parseInt(matrixValues[i], 10);
+        }
+        matrixValues[xIndex] = that.x;
+        matrixValues[yIndex] = that.y;
+        matrixValues[zIndex] = -150 + that.z;
+        that.HTMLElement.style.transform = "matrix3d(" + matrixValues.join(", ") + ")";
+    };
     this.calculMeanMembership = function () {
         var moveDistance = 0;
         protoPositionMean.x = 0;
@@ -110,17 +140,17 @@ function Proto(positionObject, groupColor) {
             }
             protoPositionMean.x /= membership.length;
             protoPositionMean.y /= membership.length;
+            protoPositionMean.z /= membership.length;
             moveDistance = Point.distanceTwoPoints(that.x, that.y, protoPositionMean.x, protoPositionMean.y);
             that.x = protoPositionMean.x;
             that.y = protoPositionMean.y;
             that.z = protoPositionMean.z;
+            console.groupEnd();
         }
         return moveDistance;
     };
-    this.updateHTMLPosition = function () {
-        that.HTMLElement.style.bottom = that.y + "px";
-        that.HTMLElement.style.left = that.x + "px";
-        //TODO how to do for z coord ?
+    this.updateColor = function (newColor) {
+        that.HTMLElement.style.backgroundColor = newColor;
     };
 
     this.emptyMembership = function () {
