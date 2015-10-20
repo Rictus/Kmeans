@@ -59,16 +59,18 @@ function Color(colorString) {
     };
 
 
-    var convertionRoutine_FunctionCalls = [convert.RGBA_to_Hexa, convert.Hexa_to_RGBA];
-
-    /**
-     * Remove a given function to the convertionRoutine_FunctionCalls if it does exist
-     * @param funcCall
-     */
-    var removeFromConvertionRoutineArray = function (funcCall) {
-        var indexOfFunc = convertionRoutine_FunctionCalls.indexOf(funcCall);
-        if (indexOfFunc >= 0) {
-            convertionRoutine_FunctionCalls.splice(indexOfFunc, 1);
+    var convertionRoutine = {
+        array: [convert.RGBA_to_Hexa, convert.Hexa_to_RGBA],
+        removeFromRoutine : function (funcCall) {
+            var indexOfFunc = this.array.indexOf(funcCall);
+            if (indexOfFunc >= 0) {
+                this.array.splice(indexOfFunc, 1);
+            }
+        },
+        launchRoutine: function () {
+            for (var i = 0; i < this.array.length; i++) {
+                this.array[i]();
+            }
         }
     };
 
@@ -140,23 +142,15 @@ function Color(colorString) {
         }
     };
 
-    /**
-     * Convert the current color to all known color description
-     */
-    var convertionRoutine = function () {
-        for (var i = 0; i < convertionRoutine_FunctionCalls.length; i++) {
-            convertionRoutine_FunctionCalls[i]();
-        }
-    };
 
     if (testAndSet.is_hexa(colorString)) {
         console.log(colorString + " is hexa");
         this.Hexa = colorString;
-        removeFromConvertionRoutineArray(convert.RGBA_to_Hexa);
+        convertionRoutine.removeFromRoutine(convert.RGBA_to_Hexa);
     }
     if (testAndSet.is_rgba(colorString) || testAndSet.is_rgb(colorString)) {
         console.log(colorString + " is rgb/rgba");
-        removeFromConvertionRoutineArray(convert.Hexa_to_RGBA);
+        convertionRoutine.removeFromRoutine(convert.Hexa_to_RGBA);
     }
-    convertionRoutine();
+
 }
