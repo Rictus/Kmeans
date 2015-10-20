@@ -1,5 +1,5 @@
 window.onload = function () {
-    var firstColor = "rgba(52, 152, 219,.5)";
+    var firstColor = "rgba(46, 204, 113,1.0)";
     var secondColor = "#c0392b";
     var container = document.getElementById('colorContainer');
     var leftDom = (container.getElementsByClassName('left')[0]);
@@ -9,7 +9,8 @@ window.onload = function () {
 
     var fColorObject = new Color(firstColor);
 
-    rightDom.style.backgroundColor = fColorObject.RGBA.getString();
+    rightDom.style.backgroundColor = fColorObject.RGBA.getStringRgba();
+    console.log(fColorObject.RGBA.getStringRgba());
 };
 
 function Color(colorString) {
@@ -19,14 +20,20 @@ function Color(colorString) {
         green: 0,
         blue: 0,
         opacity: 1,
-        getString: function () {
+        getStringRgba: function () {
             return "rgba(" + this.red + "," + this.green + "," + this.blue + "," + this.opacity + ")";
+        },
+        getStringRgb: function () {
+            return "rgba(" + this.red + "," + this.green + "," + this.blue + ")";
         }
     };
     this.Hexa = "";
 
     var regex = {
-        spaceFinder: /[\s]/gi
+        spaceFinder: /[\s]/gi,
+        hexaColor: /^#[0-9a-fA-F]{6}$/, //match for #c0392b
+        rgbaColor: /^rgba\([0-9]+,[0-9]+,[0-9]+,[0-9]*?\.?[0-9]+\)$/i, //match for rgba(255,255,255,.5) as well as rgba(255,255,255,1) as well as rgba(255,255,255,5.5)
+        rgbColor: /^rgb\([0-9]+,[0-9]+,[0-9]+\)$/ //math for rgb(255,255,255)
     };
 
     var convert = {
@@ -34,41 +41,68 @@ function Color(colorString) {
          * Convert the current color to hexadecimal,
          * assuming it's a rgba description.
          */
-        RGBA_Hexa: function () {
+        RGBA_to_Hexa: function () {
+            var redStringPart = that.RGBA.red + "";
+            var greenStringPart = that.RGBA.green + "";
+            var blueStringPart = that.RGBA.blue + "";
+            that.Hexa = "#" + redStringPart.toString(16) + greenStringPart.toString(16) + blueStringPart.toString(16);
+        },
+        Hexa_to_RGBA: function () {
             var firstTwoChars = that.Hexa.substr(1, 2);
             var secondTwoChars = that.Hexa.substr(3, 2);
             var thirdTwoChars = that.Hexa.substr(5, 2);
             that.RGBA.red = parseInt(firstTwoChars, 16);
             that.RGBA.green = parseInt(secondTwoChars, 16);
             that.RGBA.blue = parseInt(thirdTwoChars, 16);
-            console.log(firstTwoChars + " " + parseInt(firstTwoChars, 16));
             that.RGBA.opacity = 1;
         }
     };
 
 
-    var convertionRoutine_FunctionCalls = [convert.RGBA_Hexa];
-    var test = {
+    var convertionRoutine_FunctionCalls = [convert.RGBA_to_Hexa, convert.Hexa_to_RGBA];
+
+    /**
+     * Remove a given function to the convertionRoutine_FunctionCalls if it does exist
+     * @param funcCall
+     */
+    var removeFromConvertionRoutineArray = function (funcCall) {
+        var indexOfFunc = convertionRoutine_FunctionCalls.indexOf(funcCall);
+        if (indexOfFunc >= 0) {
+            convertionRoutine_FunctionCalls.splice(indexOfFunc, 1);
+        }
+    };
+
+    /**
+     * Some funcs to test if for a given string representation of a color it match the regex
+     * and init the values
+     * E.G : If you launch is_hexa test and it succeed, this.Hexa will be set to the value
+     */
+    var testAndSet = {
         is_hexa: function (color) {//Ex: #e74c3c
-            var hexaColorRegex = /^#[0-9a-fA-F]{6}$/;
-            return hexaColorRegex.test(color);
+            var it_is = regex.hexaColor.test(color);
+            if (it_is)
+                that.Hexa = color;
+            return it_is;
         },
         is_rgb: function (color) {//Ex: rgb(153,240,140)
             color = color.replace(regex.spaceFinder, '');
-            var rgbColorRegex = /^rgb\([0-9]+,[0-9]+,[0-9]+\)$/;
-            var it_is = rgbColorRegex.test(color);
+            var it_is = regex.rgbColor.test(color);
             if (it_is) {
-                var rgbPart = color.substr(4, color.length - 2); //Removing "rgb(" and ")"
+                var rgbPart = color.substr(4, color.length - 5); //Removing "rgb(" and ")"
                 var innerParts = rgbPart.split(',');
                 var i = 0;
-                var curNumber = 0;
                 do {
-                    curNumber = parseInt(innerParts[i], 10);
-                    if (!(isInt(curNumber) && curNumber <= 255))
+                    innerParts[i] = parseInt(innerParts[i], 10);
+                    if (!(isInt(innerParts[i]) && innerParts[i] <= 255))
                         it_is = false;
                     i++;
                 } while (it_is && i < innerParts.length);
-
+                if (it_is) {
+                    that.RGBA.red = innerParts[0];
+                    that.RGBA.green = innerParts[1];
+                    that.RGBA.blue = innerParts[2];
+                    that.RGBA.opacity = 1;
+                }
                 return it_is;
             } else {
                 return false;
@@ -76,24 +110,26 @@ function Color(colorString) {
         },
         is_rgba: function (color) {//Ex: rgba(153,240,140, .5) as rgba(153,240,140, 1) as rgba(153,240,140, 0.5)
             color = color.replace(regex.spaceFinder, '');
-            var rgbColorRegex = /^rgba\([0-9]+,[0-9]+,[0-9]*\.?[0-9]+\)$/; //TODO HERE : Why is this regex not working ?
-            var it_is = rgbColorRegex.test(color);
+            var it_is = regex.rgbaColor.test(color);
             if (it_is) {
-                var rgbPart = color.substr(4, color.length - 2);
+                var rgbPart = color.substr(5, color.length - 6);
                 var innerParts = rgbPart.split(',');
                 var i = 0;
-                var curNumber = 0;
                 do {
-                    curNumber = parseInt(innerParts[i], 10);
-                    if (isInt(curNumber) && curNumber < 255)
+                    innerParts[i] = parseInt(innerParts[i], 10);
+                    if (!(isInt(innerParts[i]) && innerParts[i] <= 255))
                         it_is = false;
                     i++;
                 } while (it_is && i < innerParts.length - 1); //-1 : alpha part shouldn't be read here
-
                 if (it_is) {
                     var opacityNumber = parseFloat(innerParts[innerParts.length - 1]);
-                    if (!(isFloat(opacityNumber) && opacityNumber <= 1)) {
+                    if (!( (isFloat(opacityNumber) ||isInt(opacityNumber)) && opacityNumber <= 1.0)) {
                         it_is = false;
+                    } else {
+                        that.RGBA.red = innerParts[0];
+                        that.RGBA.green = innerParts[1];
+                        that.RGBA.blue = innerParts[2];
+                        that.RGBA.opacity = opacityNumber;
                     }
                 }
 
@@ -113,20 +149,14 @@ function Color(colorString) {
         }
     };
 
-    if (test.is_hexa(colorString)) {
+    if (testAndSet.is_hexa(colorString)) {
         console.log(colorString + " is hexa");
         this.Hexa = colorString;
-        //TODO : And remove all conversion from XXX To Hexa, from the array
+        removeFromConvertionRoutineArray(convert.RGBA_to_Hexa);
     }
-    if (test.is_rgb(colorString)) {
-        console.log(colorString + " is rgb");
-        //Assuming no opacity
-        that.Hexa = 1;
-        //TODO : And remove all conversion from XXX To rgb, from the array
+    if (testAndSet.is_rgba(colorString) || testAndSet.is_rgb(colorString)) {
+        console.log(colorString + " is rgb/rgba");
+        removeFromConvertionRoutineArray(convert.Hexa_to_RGBA);
     }
-    if (test.is_rgba(colorString)) {
-        console.log(colorString + " is rgba");
-        //TODO : And remove all conversion from XXX To rgba, from the array
-    }
-    //convertionRoutine();
+    convertionRoutine();
 }

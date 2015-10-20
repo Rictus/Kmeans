@@ -1,3 +1,8 @@
+body {
+  margin: 0;
+  padding: 0;
+}
+
 @protoWidth: 10px;
 .proto {
   position: absolute;
@@ -201,14 +206,19 @@
 }
 
 .colorContainer {
+  &, * {
+    box-sizing: border-box;
+  }
   position: absolute;
   height: 100%;
   width: 100%;
+  overflow: hidden;
   .rail {
     position: absolute;
     top: 0;
     bottom: 0;
-    width: 50%;;
+    width: 50%;
+    border: solid 1px white;
 
     &.left {
       left: 0;
