@@ -50,6 +50,7 @@ function KMeans(mainParentElement, userOptions) {
         console.log(Options);
     };
 
+    //mainParentElement.innerHTML = "";
     readOptions();
     var coordinate = new Coordinate(mainParentElement);
     setTimeout(loops, 1000);

@@ -100,7 +100,6 @@
     font-size: 25px;
   }
 
-
 }
 
 .threeDimensions {
@@ -198,5 +197,24 @@
   .point {
     //Comments for now, it could break point positionning. Gonna animate it in js
     //animation: reverseSpinMove 10s infinite linear;
+  }
+}
+
+.colorContainer {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  .rail {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50%;;
+
+    &.left {
+      left: 0;
+    }
+    &.right {
+      right: 0;
+    }
   }
 }
