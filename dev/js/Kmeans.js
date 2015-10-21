@@ -1,6 +1,5 @@
 'use strict';
-function KMeans(mainParentElement, userOptions) {
-
+function KMeans(mainParentElement, userOptions, onDone) {
     var loops = function () {
         var cummulatedMoveDistance = 0;
         //Finding closest protos for each points
@@ -27,9 +26,11 @@ function KMeans(mainParentElement, userOptions) {
 
 
         if (cummulatedMoveDistance == 0) {
-            //Done
+            if(typeof onDone === "function") {
+                onDone();
+            }
         } else if (Options.ACTIVE_ANIMATION) {
-            setTimeout(loops, 300);
+            setTimeout(loops, Options.TIME_BETWEEN_ITERATIONS);
         } else {
             loops();
         }
@@ -41,17 +42,16 @@ function KMeans(mainParentElement, userOptions) {
                 if (Options.hasOwnProperty(key) && userOptions.hasOwnProperty(key)) {
                     Options[key] = userOptions[key];
                 } else {
-                    console.warn("Unknown property from given option object : " + key);
+                    //console.warn("Unknown property from given option object : " + key);
                 }
             }
         } else {
-            console.warn("No option given");
+            console.warn("No option given, using default");
         }
-        console.log(Options);
     };
 
     //mainParentElement.innerHTML = "";
     readOptions();
     var coordinate = new Coordinate(mainParentElement);
-    setTimeout(loops, 1000);
+    setTimeout(loops, Options.TIME_BEFORE_CALCUL);
 }

@@ -5,27 +5,24 @@
 "use strict";
 
 
-
 var update2DPosition = function (element, positionObject) {
     element.style.bottom = positionObject.y + "px";
     element.style.left = positionObject.x + "px";
 };
 
 var update3DPosition = function (element, positionObject) {
-    var xIndex = 12;
-    var yIndex = 13;
-    var zIndex = 14;
-    var computedStyle = getComputedStyle(element);
-    var computedTransform = computedStyle.transform;
-    var matrixValues = computedTransform.substring(9, computedTransform.length - 1).split(", ");
-    for (var i = 0; i < matrixValues.length; i++) {
-        matrixValues[i] = parseInt(matrixValues[i], 10);
-    }
-    matrixValues[xIndex] = positionObject.x;
-    matrixValues[yIndex] = positionObject.y;
-    matrixValues[zIndex] = Options.MAX_Z / -2 + positionObject.z;
+    var xTranslationIndex = 12;
+    var yTranslationIndex = 13;
+    var zTranslationIndex = 14;
+    var matrixValues = getTransformationMatrix(element);
+    //TODO Abandonner matrice de transformation homogène pour ça : https://github.com/tmanderson/EasyTransform
+    matrixValues[xTranslationIndex] = positionObject.x;
+    matrixValues[yTranslationIndex] = positionObject.y;
+    matrixValues[zTranslationIndex] = Options.MAX_Z / -2 + positionObject.z;
     element.style.transformPolyfill("matrix3d(" + matrixValues.join(", ") + ")");
 };
+
+
 function Point(positionObject) {
     var that = this;
     this.x = 0;
@@ -103,7 +100,6 @@ function Proto(positionObject, groupColor) {
         x: 0, y: 0, z: 0
     };
     this.membershipColor = typeof groupColor === "undefined" ? "rgba(255,0,0,1)" : groupColor;
-
 
 
     var buildProto = function () {

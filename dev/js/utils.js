@@ -64,6 +64,44 @@ Object.prototype.transformPolyfill = function (transformation) {
     this.transform = transformation;      //Standard
 };
 
+/**
+ * Get the computed transfomation of a given element
+ * as a homogenous transformation matrice.
+ * Each element is accessible with these simple keys :
+ * xTranslate
+ * xRotate
+ *
+ * @param element
+ * @returns {Array}
+ */
+var getTransformationMatrix = function (element) {
+    var computedStyle = getComputedStyle(element);
+    //var computedTransform = computedStyle.transform;
+    var computedTransform = computedStyle.getPropertyValue("-webkit-transform") ||
+        computedStyle.getPropertyValue("-moz-transform") ||
+        computedStyle.getPropertyValue("-ms-transform") ||
+        computedStyle.getPropertyValue("-o-transform") ||
+        computedStyle.getPropertyValue("transform");
+    var matrixValues = computedTransform.substring(9, computedTransform.length - 1).split(", ");
+    for (var i = 0; i < matrixValues.length; i++) {
+        matrixValues[i] = parseInt(matrixValues[i], 10);
+    }
+    var out = {
+        matrix: matrixValues,
+        translate: {
+            x: matrixValues[12],
+            y: matrixValues[13],
+            z: matrixValues[14]
+        },
+        rotate: {
+            x: matrixValues[4],
+            y: matrixValues[5],
+            z: matrixValues[6]
+        },
+        skew: {}
+    };
+    return matrixValues;
+};
 
 function throttle(fn, threshhold, scope) {
     threshhold || (threshhold = 250);
@@ -102,10 +140,10 @@ function debounce(func, wait, immediate) {
 }
 
 
-function isInt(n){
+function isInt(n) {
     return Number(n) === n && n % 1 === 0;
 }
 
-function isFloat(n){
+function isFloat(n) {
     return n === Number(n) && n % 1 !== 0;
 }
