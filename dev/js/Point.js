@@ -15,7 +15,6 @@ var update3DPosition = function (element, positionObject) {
     var yTranslationIndex = 13;
     var zTranslationIndex = 14;
     var matrixValues = getTransformationMatrix(element);
-    //TODO Abandonner matrice de transformation homogène pour ça : https://github.com/tmanderson/EasyTransform
     matrixValues[xTranslationIndex] = positionObject.x;
     matrixValues[yTranslationIndex] = positionObject.y;
     matrixValues[zTranslationIndex] = Options.MAX_Z / -2 + positionObject.z;

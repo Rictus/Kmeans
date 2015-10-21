@@ -6,11 +6,10 @@ var gulp = require('gulp');
 var uglify = require('gulp-uglify');
 var concat = require('gulp-concat');
 var path = require('path');
-
+var imagemin = require('gulp-imagemin');
 var dev = true;
 
-gulp.task('default', function () {
-});
+gulp.task('default', ['lessProd', 'js', 'img']);
 
 
 var watcherChangeHandler = function (event) {
@@ -65,7 +64,8 @@ jsWatcher.on('change', watcherChangeHandler);
 gulp.task('img', function () {
     return gulp.src('./dev/img/**/*.{png,jpg,jpeg,gif,svg}')
         .pipe(imagemin())
-        .pipe(gulp.dest(prod + '/public/img/'));
+        .pipe(gulp.dest('./public/img/'));
 });
+
 var imgWatcher = gulp.watch("./dev/img/**/*.{png,jpg,jpeg,gif,svg}", ['img']);
 imgWatcher.on('change', watcherChangeHandler);
