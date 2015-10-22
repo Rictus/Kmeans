@@ -9,7 +9,7 @@ function Color(colorString) {
             return "rgba(" + this.red + "," + this.green + "," + this.blue + "," + this.opacity + ")";
         },
         getStringRgb: function () {
-            return "rgba(" + this.red + "," + this.green + "," + this.blue + ")";
+            return "rgb(" + this.red + "," + this.green + "," + this.blue + ")";
         },
         genRandomRgba: function () {
             var red = Math.round(Math.random() * (255));
@@ -31,6 +31,41 @@ function Color(colorString) {
             var cssSat = this.saturation * 100;
             var cssLig = this.lightness * 100;
             return "hsl(" + cssHue + "," + cssSat + "%," + cssLig + "%)";
+        },
+        getCSSString_decimalAdjust: function (typeOfAdjust, numberOfDecimals) {
+            if (!(typeof typeOfAdjust === 'string' && (typeOfAdjust === 'ceil' || typeOfAdjust === 'floor' || typeOfAdjust === 'round'))) {
+                typeOfAdjust = 'ceil';
+            }
+            numberOfDecimals = typeof numberOfDecimals === "number" ? numberOfDecimals : 4;
+
+            var cssHue = decimalAdjust('ceil', this.hue * 360, numberOfDecimals * -1);
+            var cssSat = decimalAdjust('ceil', this.saturation * 100, numberOfDecimals * -1);
+            var cssLig = decimalAdjust('ceil', this.lightness * 100, numberOfDecimals * -1);
+            return "hsl(" + cssHue + "," + cssSat + "%," + cssLig + "%)";
+        }
+    };
+    this.XYZ = {
+        X: 0,
+        Y: 0,
+        Z: 0,
+        getString: function () {
+            return "xyz(" + this.X + "," + this.Y + "," + this.Z + ")";
+        }
+    };
+    that.LAB = {
+        L: 0,
+        A: 0,
+        B: 0,
+        getString: function () {
+            return "LAB(" + this.L + "," + this.A + "," + this.B + ")";
+        },
+        distance: function (labObject) {
+
+            var lpow = Math.pow(that.LAB.L - labObject.L, 2);
+            var apow = Math.pow(that.LAB.A - labObject.A, 2);
+            var bpow = Math.pow(that.LAB.B - labObject.B, 2);
+
+            return Math.sqrt(lpow + apow + bpow);
         }
     };
     this.Hexa = "";
@@ -127,6 +162,47 @@ function Color(colorString) {
             that.RGBA.blue = Math.round(b * 255);
             that.RGBA.opacity = 1;
             log.colorConvertionReport("Convert HSL to RGBA", that.HSL.getString(), that.RGBA.getStringRgba());
+        },
+        RGBA_to_XYZ: function () {
+
+            var nt_R = (that.RGBA.red / 255);
+            var nt_G = (that.RGBA.green / 255);
+            var nt_B = (that.RGBA.blue / 255);
+
+            if (nt_R > 0.04045) nt_R = Math.pow(( ( nt_R + 0.055 ) / 1.055 ), 2.4);
+            else                   nt_R = nt_R / 12.92;
+            if (nt_G > 0.04045) nt_G = Math.pow(( ( nt_G + 0.055 ) / 1.055 ), 2.4);
+            else                   nt_G = nt_G / 12.92;
+            if (nt_B > 0.04045) nt_B = Math.pow(( ( nt_B + 0.055 ) / 1.055 ), 2.4);
+            else                   nt_B = nt_B / 12.92;
+
+            nt_R = nt_R * 100;
+            nt_G = nt_G * 100;
+            nt_B = nt_B * 100;
+
+            //Observateur. = 2°, Illuminant = D65
+            that.XYZ.X = nt_R * 0.4124 + nt_G * 0.3576 + nt_B * 0.1805;
+            that.XYZ.Y = nt_R * 0.2126 + nt_G * 0.7152 + nt_B * 0.0722;
+            that.XYZ.Z = nt_R * 0.0193 + nt_G * 0.1192 + nt_B * 0.9505;
+            log.colorConvertionReport("Converting from RGBA to XYZ", that.RGBA.getStringRgba(), that.XYZ.getString());
+        },
+        XYZ_to_LAB: function () {
+
+            var nt_X = that.XYZ.X / 95.047;  //ref_X =  95.047    Observateur= 2°, Illuminant= D65
+            var nt_Y = that.XYZ.Y / 100.000;  //ref_Y = 100.000
+            var nt_Z = that.XYZ.Z / 108.883;  //ref_Z = 108.883
+
+            if (nt_X > 0.008856) nt_X = Math.pow(nt_X, ( 1 / 3 ));
+            else                    nt_X = ( 7.787 * nt_X ) + ( 16 / 116 );
+            if (nt_Y > 0.008856) nt_Y = Math.pow(nt_Y, ( 1 / 3 ));
+            else                    nt_Y = ( 7.787 * nt_Y ) + ( 16 / 116 );
+            if (nt_Z > 0.008856) nt_Z = Math.pow(nt_Z, ( 1 / 3 ));
+            else                    nt_Z = ( 7.787 * nt_Z ) + ( 16 / 116 );
+
+            that.LAB.L = ( 116 * nt_Y ) - 16;
+            that.LAB.A = 500 * ( nt_X - nt_Y );
+            that.LAB.B = 200 * ( nt_Y - nt_Z );
+            log.colorConvertionReport("Converting from RGBA to XYZ", that.XYZ.getString(), that.LAB.getString());
         }
     };
 
@@ -140,7 +216,7 @@ function Color(colorString) {
     };
 
     var convertionRoutine = {
-        arrayFuncCalls: [convert.RGBA_to_Hexa, convert.Hexa_to_RGBA, convert.RGBA_to_HSL, convert.HSL_to_RGBA],
+        arrayFuncCalls: [convert.RGBA_to_Hexa, convert.Hexa_to_RGBA, convert.RGBA_to_HSL, convert.HSL_to_RGBA, convert.RGBA_to_XYZ, convert.XYZ_to_LAB],
         removeFromRoutine: function (funcCall) {
             var indexOfFunc = this.arrayFuncCalls.indexOf(funcCall);
             if (indexOfFunc >= 0) {
@@ -244,7 +320,6 @@ function Color(colorString) {
     }
 
 
-//WIP :  RGB > XYZ
 //WIP : XYZ > CIE LAB
 //WIP : From Cie Lab : calcul Delta E
 
@@ -261,9 +336,10 @@ window.onload = function () {
 
     var container = document.getElementById('colorContainer');
     var appendingHTML = "";
-    var nbAppend = 100;
+    var nbAppend = 2;
     for (var i = 0; i < nbAppend; i++) {
-        appendingHTML += '<div class="colorCouple">' +
+        appendingHTML +=
+            '<div class="colorCouple">' +
             '<div class="rail left" id="left">' +
             '<div class="railInnerCont">' +
             '<div class="innerText">No color</div>' +
@@ -274,27 +350,44 @@ window.onload = function () {
             '<div class="innerText">No color</div>' +
             '</div>' +
             '</div>' +
+            '</div>' +
             '</div>';
     }
-    container.innerHTML = appendingHTML;
+    if (appendingHTML.length > 0) {
+        container.innerHTML = appendingHTML;
+    }
 
     var coupleColors = document.getElementsByClassName('colorCouple');
-    for (i = 0; i < coupleColors.length; i++) {
-        var Nothing = new Color();
-        var firstColor = Nothing.RGBA.genRandomRgba();
-        var secondColor = "black";
+    var firstColor = "#ff0000";
+    var secondColor = "#00ff00";
 
+    var leftDom = (coupleColors[0].getElementsByClassName('left')[0]);
+    var rightDom = (coupleColors[0].getElementsByClassName('right')[0]);
 
-        var leftDom = (coupleColors[i].getElementsByClassName('left')[0]);
-        var rightDom = (coupleColors[i].getElementsByClassName('right')[0]);
+    applyColor(leftDom, firstColor);
+    applyColor(rightDom, secondColor);
 
-        applyColor(leftDom, firstColor);
-        applyColor(rightDom, secondColor);
+    //Changing the left color representation : applying to right dom
+    var fColorObject = new Color(firstColor);
+    var sColorObject = new Color(secondColor);
+    /*var possibleStringFunc = [
+     //fColorObject.Hexa,
+     //fColorObject.HSL.getCSSString_decimalAdjust('ceil', 2),
+     //fColorObject.RGBA.getStringRgb(),
+     //fColorObject.RGBA.getStringRgba(),
+     //fColorObject.XYZ.getString(),
+     fColorObject.LAB.getString()
+     ];*/
+    //var pickRandom = Math.ceil(Math.random() * (possibleStringFunc.length - 1));
 
-        //Changing the left color representation : applying to right dom
-        var fColorObject = new Color(firstColor);
-        var changedColor = fColorObject.HSL.getCSSString();
-        console.log(changedColor);
-        applyColor(rightDom, changedColor);
+    //var changedColor = possibleStringFunc[pickRandom];
+
+    console.log(fColorObject);
+    console.log(sColorObject);
+    var colorDistance = fColorObject.LAB.distance(sColorObject.LAB);
+    console.log(colorDistance);
+    if (colorDistance < 20) {
+        console.log("Almost same");
     }
+
 };
