@@ -10,5 +10,6 @@ var Options = {
     ACTIVE_ANIMATION: true,
     ACTIVE_3D: true,
     TIME_BEFORE_CALCUL: 1000, //ms
-    TIME_BETWEEN_ITERATIONS: 1000 //ms
+    TIME_BETWEEN_ITERATIONS: 1000, //ms
+    ENABLE_LOG: false
 };

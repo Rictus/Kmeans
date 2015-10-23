@@ -212,9 +212,33 @@ body {
   position: absolute;
   height: 100%;
   width: 100%;
+  word-wrap: break-word;
+  color: white;
+  font-size: 3vw;
+  font-family: 'Roboto', 'Montserrat', 'Open Sans', sans-serif;
+  line-height: 6vw;
+  text-align: center;
+  .colorDistanceValue {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 99;
+
+    margin: 0;
+    padding: 0;
+    height: 50%;
+    width: 100px;
+
+    color: white;
+    border: solid 1px white;
+    background: black;
+    //font-size: 1vw;
+    line-height: 60px;
+  }
   .colorCouple {
     position: relative;
-    height: 30%;
+    height: 120px;
   }
   .rail {
     position: relative;
@@ -245,14 +269,8 @@ body {
       padding: 10px 0;
       margin: auto;
       width: 90%;
-      word-wrap: break-word;
 
       background: none;
-      color: white;
-      font-size: 3vw;
-      font-family: 'Roboto', 'Montserrat', 'Open Sans', sans-serif;
-      line-height: 6vw;
-      text-align: center;
     }
   }
 }

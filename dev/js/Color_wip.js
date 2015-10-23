@@ -208,10 +208,17 @@ function Color(colorString) {
 
     var log = {
         colorConvertionReport: function (whichConversion, sourceColor, destColor) {
-            console.group(whichConversion);
-            console.log(sourceColor);
-            console.log(destColor);
-            console.groupEnd();
+            if (Options.ENABLE_LOG) {
+                console.group(whichConversion);
+                console.log(sourceColor);
+                console.log(destColor);
+                console.groupEnd();
+            }
+        },
+        log: function (msg) {
+            if (Options.ENABLE_LOG) {
+                console.log(msg);
+            }
         }
     };
 
@@ -303,17 +310,17 @@ function Color(colorString) {
 
     if (colorString) {
         if (testAndSet.is_hexa(colorString)) {
-            console.log(colorString + " is hexa");
+            log.log(colorString + " is hexa");
             this.Hexa = colorString;
             convertionRoutine.removeFromRoutine(convert.RGBA_to_Hexa);
         }
         if (testAndSet.is_rgba(colorString) || testAndSet.is_rgb(colorString)) {
-            console.log(colorString + " is rgb/rgba");
+            log.log(colorString + " is rgb/rgba");
             convertionRoutine.removeFromRoutine(convert.Hexa_to_RGBA);
             convertionRoutine.removeFromRoutine(convert.HSL_to_RGBA);
         }
         if (testAndSet.is_hsl(colorString)) {
-            console.log(colorString + " is hsl");
+            log.log(colorString + " is hsl");
             convertionRoutine.removeFromRoutine(convert.RGBA_to_HSL);
         }
         convertionRoutine.launchRoutine();
@@ -334,60 +341,85 @@ window.onload = function () {
         innnerText.innerHTML = colorString;
     };
 
+    var buildHTMLColorCouple = function (leftColor, rightColor, distanceValue) {
+        var colorCoupleDom = createCompleteElement('div', 'colorCouple', '', []);
+        var distanceDom = createCompleteElement('div', 'colorDistanceValue');
+        var leftRailDom = createCompleteElement('div', ['rail', 'left']);
+        var rightRailDom = createCompleteElement('div', ['rail', 'right']);
+        var leftRaillInnerDom = createCompleteElement('div', ['railInnerCont']);
+        var rightRaillInnerDom = createCompleteElement('div', ['railInnerCont']);
+        var leftRaillInnerTextDom = createCompleteElement('div', ['innerText'], '', [], "No color");
+        var rightRaillInnerTextDom = createCompleteElement('div', ['innerText'], '', [], "No color");
+
+        leftRaillInnerDom.appendChild(leftRaillInnerTextDom);
+        leftRailDom.appendChild(leftRaillInnerDom);
+        rightRaillInnerDom.appendChild(rightRaillInnerTextDom);
+        rightRailDom.appendChild(rightRaillInnerDom);
+
+        colorCoupleDom.appendChild(distanceDom);
+        colorCoupleDom.appendChild(leftRailDom);
+        colorCoupleDom.appendChild(rightRailDom);
+
+        applyColor(leftRailDom, leftColor);
+        applyColor(rightRailDom, rightColor);
+
+        distanceDom.innerHTML = distanceValue;
+
+        return colorCoupleDom;
+    };
+
     var container = document.getElementById('colorContainer');
     var appendingHTML = "";
-    var nbAppend = 2;
-    for (var i = 0; i < nbAppend; i++) {
-        appendingHTML +=
-            '<div class="colorCouple">' +
-            '<div class="rail left" id="left">' +
-            '<div class="railInnerCont">' +
-            '<div class="innerText">No color</div>' +
-            '</div>' +
-            '</div>' +
-            '<div class="rail right" id="right">' +
-            '<div class="railInnerCont">' +
-            '<div class="innerText">No color</div>' +
-            '</div>' +
-            '</div>' +
-            '</div>' +
-            '</div>';
+    var nbBar = 20;
+    var barColorsArray = [];
+    var generator = new Color();
+    var barColors = document.getElementsByClassName('colorCouple');
+    for (i = 0; i < nbBar; i++) {
+        var barColorObject = {
+            dom: "",
+            stringColor: {
+                left: "",
+                right: ""
+            },
+            colorObject: {
+                left: "",
+                right: "",
+                distance: ""
+            }
+        };
+        barColorObject.stringColor.left = generator.RGBA.genRandomRgba();
+        barColorObject.stringColor.right = generator.RGBA.genRandomRgba();
+
+        barColorObject.colorObject.left = new Color(barColorObject.stringColor.left);
+        barColorObject.colorObject.right = new Color(barColorObject.stringColor.right);
+        barColorObject.colorObject.distance = barColorObject.colorObject.left.LAB.distance(barColorObject.colorObject.right.LAB);
+
+
+        /* barColorObject.dom.left = barColors[i].querySelector('.left');
+         barColorObject.dom.right = barColors[i].querySelector('.right');
+         barColorObject.dom.distance = barColors[i].querySelector('.colorDistanceValue');
+         barColorObject.dom.distance.innerHTML = Math.ceil(barColorObject.colorObject.distance);
+         applyColor(barColorObject.dom.left, barColorObject.stringColor.left);
+         applyColor(barColorObject.dom.right, barColorObject.stringColor.right);*/
+
+        barColorsArray.push(barColorObject);
     }
-    if (appendingHTML.length > 0) {
-        container.innerHTML = appendingHTML;
+
+
+    barColorsArray = barColorsArray.sort(function (barObject1, barObject2) {
+        if (barObject1.colorObject.distance < barObject2.colorObject.distance) {
+            return -1;
+        }
+        if (barObject1.colorObject.distance > barObject2.colorObject.distance) {
+            return 1;
+        }
+        // a must be equal to b
+        return 0;
+    });
+
+    for (var i = 0; i < barColorsArray.length; i++) {
+        container.appendChild(buildHTMLColorCouple(barColorsArray[i].stringColor.left, barColorsArray[i].stringColor.right, Math.ceil(barColorsArray[i].colorObject.distance)));
     }
-
-    var coupleColors = document.getElementsByClassName('colorCouple');
-    var firstColor = "#ff0000";
-    var secondColor = "#00ff00";
-
-    var leftDom = (coupleColors[0].getElementsByClassName('left')[0]);
-    var rightDom = (coupleColors[0].getElementsByClassName('right')[0]);
-
-    applyColor(leftDom, firstColor);
-    applyColor(rightDom, secondColor);
-
-    //Changing the left color representation : applying to right dom
-    var fColorObject = new Color(firstColor);
-    var sColorObject = new Color(secondColor);
-    /*var possibleStringFunc = [
-     //fColorObject.Hexa,
-     //fColorObject.HSL.getCSSString_decimalAdjust('ceil', 2),
-     //fColorObject.RGBA.getStringRgb(),
-     //fColorObject.RGBA.getStringRgba(),
-     //fColorObject.XYZ.getString(),
-     fColorObject.LAB.getString()
-     ];*/
-    //var pickRandom = Math.ceil(Math.random() * (possibleStringFunc.length - 1));
-
-    //var changedColor = possibleStringFunc[pickRandom];
-
-    console.log(fColorObject);
-    console.log(sColorObject);
-    var colorDistance = fColorObject.LAB.distance(sColorObject.LAB);
-    console.log(colorDistance);
-    if (colorDistance < 20) {
-        console.log("Almost same");
-    }
+    console.log(barColorsArray)
 
 };
