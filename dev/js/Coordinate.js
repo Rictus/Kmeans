@@ -1,4 +1,4 @@
-"use strict";
+
 function Coordinate(mainParentElement) {
     this.HTMLElement = mainParentElement;
     var that = this;

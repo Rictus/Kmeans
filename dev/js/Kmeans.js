@@ -1,4 +1,4 @@
-'use strict';
+
 function KMeans(mainParentElement, userOptions, onDone) {
     var loops = function () {
         var cummulatedMoveDistance = 0;

@@ -1,4 +1,4 @@
-"use strict";
+
 function createCompleteElement(elemName, classNames, ids, attributes, textNode) {//Create element
     var el = document.createElement((elemName) ? elemName : 'div');
     //adding classname(s)
@@ -53,16 +53,12 @@ function offset(elt) {
     }
 }
 
-/**
- * Apply a style transformation to an element.
- * Use it like :  div.style.transformPolyfill("scale(1.2)");
- * @param transformation        The transformation you want to apply
- */
-Object.prototype.transformPolyfill = function (transformation) {
-    this.WebkitTransform = transformation; //Chrome, Safari, Opera
-    this.msTransform = transformation;     //IE9
-    this.transform = transformation;      //Standard
-};
+
+function transformPolyfill(element, transformation) {
+    element.WebkitTransform = transformation; //Chrome, Safari, Opera
+    element.msTransform = transformation;     //IE9
+    element.transform = transformation;      //Standard
+}
 
 /**
  * Get the computed transfomation of a given element

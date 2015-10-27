@@ -2,7 +2,6 @@
  * @param positionObject
  * @constructor
  */
-"use strict";
 
 
 var update2DPosition = function (element, positionObject) {
@@ -18,7 +17,7 @@ var update3DPosition = function (element, positionObject) {
     matrixValues[xTranslationIndex] = positionObject.x;
     matrixValues[yTranslationIndex] = positionObject.y;
     matrixValues[zTranslationIndex] = Options.MAX_Z / -2 + positionObject.z;
-    element.style.transformPolyfill("matrix3d(" + matrixValues.join(", ") + ")");
+    transformPolyfill(element, "matrix3d(" + matrixValues.join(", ") + ")");
 };
 
 

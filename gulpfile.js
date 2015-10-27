@@ -1,3 +1,4 @@
+var browserSync = require('browser-sync').create();
 var less = require('gulp-less');
 var rename = require('gulp-rename');
 var autoprefixer = require('gulp-autoprefixer');
@@ -8,8 +9,11 @@ var concat = require('gulp-concat');
 var path = require('path');
 var imagemin = require('gulp-imagemin');
 var dev = true;
-
-gulp.task('default', ['lessProd', 'js', 'img']);
+var reload = browserSync.reload;
+var indexUrl = "./index_color.html";
+var browsers = ['chrome'];
+gulp.task('default', ['css', 'js', 'img', 'serve']);
+//gulp.task('default', ['css', 'js', 'img']);
 
 
 var watcherChangeHandler = function (event) {
@@ -17,25 +21,28 @@ var watcherChangeHandler = function (event) {
     console.log("File " + event.path + " was " + event.type + ", runnings tasks...");
 };
 
+
 /*************************************************/
 //
 //                    C S S
 //
 /*************************************************/
 
-gulp.task('lessProd', function () {
-    var curPipe = gulp.src("./dev/css/**/*.less")
+gulp.task('css', function () {
+    var stream = gulp.src("./dev/css/**/*.less")
         .pipe(less())
         .pipe(autoprefixer('> 1%'));
     if (!dev) {
-        curPipe = curPipe.pipe(minify());
+        stream = stream.pipe(minify());
     }
-    curPipe.pipe(rename({extname: '.min.css'}))
+    return stream.pipe(rename({extname: '.min.css'}))
         .pipe(gulp.dest("./public/css/"));
+        //.pipe(browserSync.stream());
 });
 
-var lessWatcher = gulp.watch("./dev/css/**/*.less", ['lessProd']);
+var lessWatcher = gulp.watch("./dev/css/**/*.less", ['css']);
 lessWatcher.on('change', watcherChangeHandler);
+
 
 
 /*************************************************/
@@ -44,12 +51,13 @@ lessWatcher.on('change', watcherChangeHandler);
 //
 /*************************************************/
 gulp.task('js', function () {
-    var calls = gulp.src('./dev/js/**/*.js')
+    var stream = gulp.src('./dev/js/**/*.js')
         .pipe(concat('global.min.js'));
     if (!dev) {
-        calls = calls.pipe(uglify());
+        stream = stream.pipe(uglify());
     }
-    calls.pipe(gulp.dest('./public/js/'));
+    return stream.pipe(gulp.dest('./public/js/'));
+        //.pipe(browserSync.stream());
 });
 
 
@@ -69,3 +77,23 @@ gulp.task('img', function () {
 
 var imgWatcher = gulp.watch("./dev/img/**/*.{png,jpg,jpeg,gif,svg}", ['img']);
 imgWatcher.on('change', watcherChangeHandler);
+
+/*************************************************/
+//
+//                    Browser auto-reload
+//
+/*************************************************/
+gulp.task('serve', ['css'], function () {
+    browserSync.init({
+        server: {
+            baseDir: "./",
+            index: indexUrl,
+            browser: browsers
+        }
+    });
+
+    gulp.watch("./dev/css/*.less").on('change',reload);
+    //gulp.watch("./public/js/global.min.js").on('change', browserSync.reload);
+});
+
+gulp.task('css-watch', ['css'], browserSync.reload);
