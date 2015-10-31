@@ -197,11 +197,16 @@ body {
 
   .cube {
     //transform: rotateY(95deg);
-    animation: spin 50s infinite linear;
+    &.ready {
+      animation: spin 50s infinite linear;
+    }
   }
   .point {
     //Comments for now, it could break point positionning. Gonna animate it in js
     //animation: reverseSpinMove 10s infinite linear;
+    &.ready {
+
+    }
   }
 }
 
@@ -274,6 +279,7 @@ body {
     }
   }
 }
-*{
+
+* {
   //border:solid 1px blue!important;
 }

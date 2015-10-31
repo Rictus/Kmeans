@@ -23,6 +23,9 @@
 <script>
     window.onload = function () {
         var mainParentElement = document.getElementsByClassName('cube')[0];
+        var onDone = function () {
+            mainParentElement.classList.add('ready');
+        };
         var opt = {
             MIN_X: 0,
             MAX_X: 380,
@@ -33,9 +36,12 @@
             NB_POINTS: 900,
             NB_PROTOS: 4,
             ACTIVE_ANIMATION: true,
-            ACTIVE_3D: true
+            ACTIVE_3D: true,
+            TIME_BEFORE_CALCUL: 1000, //ms
+            TIME_BETWEEN_ITERATIONS: 300 //ms
+
         };
-        new KMeans(mainParentElement, opt);
+        new KMeans(mainParentElement, opt, onDone);
     };
 </script>
 </body>

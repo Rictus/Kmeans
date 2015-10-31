@@ -1,3 +1,4 @@
+'use strict';
 function Color(colorString) {
     var that = this;
     this.RGBA = {

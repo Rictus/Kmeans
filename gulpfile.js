@@ -8,12 +8,13 @@ var uglify = require('gulp-uglify');
 var concat = require('gulp-concat');
 var path = require('path');
 var imagemin = require('gulp-imagemin');
-var dev = true;
-var reload = browserSync.reload;
-var indexUrl = "./index_color.html";
-var browsers = ['chrome'];
-gulp.task('default', ['css', 'js', 'img', 'serve']);
-//gulp.task('default', ['css', 'js', 'img']);
+
+
+var conf = {
+    indexUrl: "./index_color.html",
+    minify: true,
+    browsers: ["google chrome"]
+};
 
 
 var watcherChangeHandler = function (event) {
@@ -21,6 +22,7 @@ var watcherChangeHandler = function (event) {
     console.log("File " + event.path + " was " + event.type + ", runnings tasks...");
 };
 
+gulp.task('default', ['css', 'js', 'img', 'serve']);
 
 /*************************************************/
 //
@@ -32,17 +34,16 @@ gulp.task('css', function () {
     var stream = gulp.src("./dev/css/**/*.less")
         .pipe(less())
         .pipe(autoprefixer('> 1%'));
-    if (!dev) {
+    if (conf.minify) {
         stream = stream.pipe(minify());
     }
     return stream.pipe(rename({extname: '.min.css'}))
-        .pipe(gulp.dest("./public/css/"));
-        //.pipe(browserSync.stream());
+        .pipe(gulp.dest("./public/css/"))
+        .pipe(browserSync.stream());
 });
 
 var lessWatcher = gulp.watch("./dev/css/**/*.less", ['css']);
 lessWatcher.on('change', watcherChangeHandler);
-
 
 
 /*************************************************/
@@ -53,11 +54,11 @@ lessWatcher.on('change', watcherChangeHandler);
 gulp.task('js', function () {
     var stream = gulp.src('./dev/js/**/*.js')
         .pipe(concat('global.min.js'));
-    if (!dev) {
+    if (conf.minify) {
         stream = stream.pipe(uglify());
     }
-    return stream.pipe(gulp.dest('./public/js/'));
-        //.pipe(browserSync.stream());
+    return stream.pipe(gulp.dest('./public/js/'))
+        .pipe(browserSync.stream());
 });
 
 
@@ -87,13 +88,18 @@ gulp.task('serve', ['css'], function () {
     browserSync.init({
         server: {
             baseDir: "./",
-            index: indexUrl,
-            browser: browsers
-        }
+            index: conf.indexUrl
+        },
+        ui: {
+            port: 3001
+        },
+        ghostMode: {
+            clicks: true,
+            forms: true,
+            scroll: true
+        },
+        browser: conf.browsers
     });
-
-    gulp.watch("./dev/css/*.less").on('change',reload);
-    //gulp.watch("./public/js/global.min.js").on('change', browserSync.reload);
 });
 
 gulp.task('css-watch', ['css'], browserSync.reload);

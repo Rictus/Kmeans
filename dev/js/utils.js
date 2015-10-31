@@ -1,4 +1,4 @@
-
+'use strict';
 function createCompleteElement(elemName, classNames, ids, attributes, textNode) {//Create element
     var el = document.createElement((elemName) ? elemName : 'div');
     //adding classname(s)
@@ -55,9 +55,9 @@ function offset(elt) {
 
 
 function transformPolyfill(element, transformation) {
-    element.WebkitTransform = transformation; //Chrome, Safari, Opera
-    element.msTransform = transformation;     //IE9
-    element.transform = transformation;      //Standard
+    element.style.WebkitTransform = transformation; //Chrome, Safari, Opera
+    element.style.msTransform = transformation;     //IE9
+    element.style.transform = transformation;      //Standard
 }
 
 /**
