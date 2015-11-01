@@ -22,7 +22,8 @@ var watcherChangeHandler = function (event) {
     console.log("File " + event.path + " was " + event.type + ", runnings tasks...");
 };
 
-gulp.task('default', ['css', 'js', 'img', 'serve']);
+//gulp.task('default', ['css', 'js', 'img', 'serve']);
+gulp.task('default', ['css', 'js', 'img']);
 
 /*************************************************/
 //

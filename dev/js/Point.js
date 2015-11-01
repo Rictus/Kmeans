@@ -10,15 +10,24 @@ var update2DPosition = function (element, positionObject) {
     element.style.left = positionObject.x + "px";
 };
 
+var initPointPosition = function (element) {
+    var transformationString = "translate3d(" + 0 + "px," + Options.MAX_Y + "px," + Options.MAX_Z / 2 + "px)";
+    transformPolyfill(element, transformationString);
+};
+
 var update3DPosition = function (element, positionObject) {
-    var xTranslationIndex = 12;
-    var yTranslationIndex = 13;
-    var zTranslationIndex = 14;
-    var matrixValues = getTransformationMatrix(element);
-    matrixValues[xTranslationIndex] = positionObject.x;
-    matrixValues[yTranslationIndex] = positionObject.y;
-    matrixValues[zTranslationIndex] = Options.MAX_Z / -2 + positionObject.z;
-    transformPolyfill(element, "matrix3d(" + matrixValues.join(", ") + ")");
+    var appliedTransform = element.style.transform;
+    var appliedTransformValues = appliedTransform.substr(12, appliedTransform.length - 13).split(", ");
+    for (var i = 0; i < appliedTransformValues.length; i++) {
+        appliedTransformValues[i] = parseInt(appliedTransformValues[i], 10);
+    }
+
+    appliedTransformValues[0] += positionObject.x;
+    appliedTransformValues[1] -= positionObject.y;
+    appliedTransformValues[2] -= positionObject.z;
+
+    var transformationString = "translate3d(" + appliedTransformValues[0] + "px," + appliedTransformValues[1] + "px," + appliedTransformValues[2] + "px)";
+    transformPolyfill(element, transformationString);
 };
 
 
@@ -34,8 +43,10 @@ function Point(positionObject) {
     };
 
     this.updatePosition = function () {
-        if (Options.ACTIVE_3D)
+        if (Options.ACTIVE_3D) {
+            initPointPosition(that.HTMLElement);
             update3DPosition(that.HTMLElement, that);
+        }
         else
             update2DPosition(that.HTMLElement, that);
     };
@@ -103,12 +114,13 @@ function Proto(positionObject, groupColor) {
 
     var buildProto = function () {
         that.HTMLElement = createCompleteElement('div', ['proto'], [], [['x', that.x], ['y', that.y], ['z', that.z]]);
-        that.updatePosition();
         that.updateColor(that.membershipColor);
     };
     this.updatePosition = function () {
-        if (Options.ACTIVE_3D)
+        if (Options.ACTIVE_3D) {
+            initPointPosition(that.HTMLElement);
             update3DPosition(that.HTMLElement, that);
+        }
         else
             update2DPosition(that.HTMLElement, that);
     };
@@ -153,4 +165,5 @@ function Proto(positionObject, groupColor) {
     this.y = positionObject.y;
     this.z = positionObject.z;
     buildProto();
+    that.updatePosition();
 }
