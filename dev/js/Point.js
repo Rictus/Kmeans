@@ -16,20 +16,54 @@ var initPointPosition = function (element) {
 };
 
 var update3DPosition = function (element, positionObject) {
-    var appliedTransform = element.style.transform;
-    var appliedTransformValues = appliedTransform.substr(12, appliedTransform.length - 13).split(", ");
-    for (var i = 0; i < appliedTransformValues.length; i++) {
-        appliedTransformValues[i] = parseInt(appliedTransformValues[i], 10);
-    }
 
-    appliedTransformValues[0] += positionObject.x;
-    appliedTransformValues[1] -= positionObject.y;
-    appliedTransformValues[2] -= positionObject.z;
-
-    var transformationString = "translate3d(" + appliedTransformValues[0] + "px," + appliedTransformValues[1] + "px," + appliedTransformValues[2] + "px)";
+    var appliedTransformValues = getTransformValues(element);
+    appliedTransformValues.translate3d[0] = parseFloat(appliedTransformValues.translate3d[0], 10) + positionObject.x;
+    appliedTransformValues.translate3d[1] = parseFloat(appliedTransformValues.translate3d[1], 10) - positionObject.y;
+    appliedTransformValues.translate3d[2] = parseFloat(appliedTransformValues.translate3d[2], 10) - positionObject.z;
+    var transformationString = "translate3d(" + appliedTransformValues.translate3d[0] + "px," + appliedTransformValues.translate3d[1] + "px," + appliedTransformValues.translate3d[2] + "px)";
     transformPolyfill(element, transformationString);
 };
 
+var getTransformValues = function (element) {
+    var appliedTransform = element.style.WebkitTransform || element.style.msTransform || element.style.transform;
+    var transformValues = {
+
+        translate: "",
+        rotate: "",
+        scale: "",
+        skew: "",
+        translate3d: "",
+        rotate3d: "",
+        scale3d: "",
+        translateX: "",
+        translateY: "",
+        translateZ: "",
+        rotateX: "",
+        rotateY: "",
+        rotateZ: "",
+        scaleX: "",
+        scaleY: "",
+        scaleZ: "",
+        skewX: "",
+        skewY: "",
+        perspective: ""
+    };
+    var transformCapturesRegex = /((translate3d|rotate3d|scale3d|translateX|translateY|translateZ|rotateX|rotateY|rotateZ|scaleX|scaleY|scaleZ|skewX|skewY|translate|rotate|scale|skew|perspective)\(([-+]?([0-9]*\.[0-9]+|[0-9]+)(px|deg)?(, ?[-+]?([0-9]*\.[0-9]+|[0-9]+)(px|deg)?){0,3})\))/gmi; //TODO Regex can be improve by adding other units (em, cm, pt, vmin, ...)
+
+    var capturedTransformation;
+    while(capturedTransformation = transformCapturesRegex.exec(appliedTransform)) {
+        transformValues[capturedTransformation[2]] = capturedTransformation[3].split(",");
+    }
+
+    //
+    //var appliedTransformValues = appliedTransform.substr(12, appliedTransform.length - 13).split(", ");
+    //for (var i = 0; i < appliedTransformValues.length; i++) {
+    //    appliedTransformValues[i] = parseInt(appliedTransformValues[i], 10);
+    //}
+    //return appliedTransformValues;
+    return transformValues;
+};
 
 function Point(positionObject) {
     var that = this;
@@ -88,6 +122,11 @@ Point.findClosestPoint = function (positionObject, pointsList) {
         }
     }
     return indexClosestPoint;
+};
+
+var activeRotation = function (element) {
+    var appliedTransformValues = getTransformValues(element);
+
 };
 
 var extendClass = function (child, parent) {
@@ -167,3 +206,5 @@ function Proto(positionObject, groupColor) {
     buildProto();
     that.updatePosition();
 }
+
+
