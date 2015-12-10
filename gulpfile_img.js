@@ -8,7 +8,7 @@ var mainTaskName = 'img';
 /*************************************************/
 
 module.exports = function (gulp) {
-    return {
+    return {//TODO add default conf
         init: function (conf) {
             gulp.task(mainTaskName, function () {
                 var imgConf = conf;

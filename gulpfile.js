@@ -11,11 +11,11 @@ var megaConf = {
         autoprefix: true,
         autoprefixString: '> 1%',
         less: true,
-        dev: {//TODO
+        dev: {//TODO dev
             destPath: "./dev/css/",
             reorderProperties: true
         },
-        prod: {//TODO
+        prod: {//TODO prod
             minify: true,
             destPath: "./public/css/"
         }

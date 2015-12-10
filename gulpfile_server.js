@@ -8,6 +8,7 @@ var mainTaskName = 'serve';
 /*************************************************/
 module.exports = function (gulp) {
     return {
+        //TODO add default conf
         init: function (conf, tasksToCompleteBeforeLoad, tasksThatReload) {
             tasksToCompleteBeforeLoad = tasksToCompleteBeforeLoad && typeof tasksToCompleteBeforeLoad === "object" && tasksToCompleteBeforeLoad.length > 0 ? tasksToCompleteBeforeLoad : [];
             browserSync = browserSync.create();

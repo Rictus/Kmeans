@@ -13,7 +13,7 @@ var mainTaskName = 'css';
 
 
 module.exports = function (gulp, getBrowserSyncInstance) {
-    return {
+    return {//TODO add default conf
         init: function (conf) {
             gulp.task(mainTaskName, function () {
                 var cssConf = conf;
