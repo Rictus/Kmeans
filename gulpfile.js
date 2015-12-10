@@ -1,8 +1,10 @@
+'use strict';
 var gulp = require('gulp');
 
 var megaConf = {
     css: {
         active: true,
+        streamCss: true,
         watchPath: "./dev/css/**/*.less",
         destPath: "./public/css/",
         renameToMin: true,
@@ -20,6 +22,7 @@ var megaConf = {
     },
     js: {
         active: true,
+        streamJs: true,
         watchPath: "./dev/js/**/*.js",
         destPath: "./public/js/",
         concat: true,
@@ -33,8 +36,6 @@ var megaConf = {
     },
     browerSync: {
         active: true,
-        streamCss: true,
-        streamJs: true,
         baseDir: "./",
         indexUrl: "./index_color.html",
         serverPort: 3001,
@@ -43,24 +44,39 @@ var megaConf = {
     }
 };
 
-var gulpCss = require('./gulpfile_css.js')(gulp);
-var gulpJs = require('./gulpfile_js.js')(gulp);
-var gulpImg = require('./gulpfile_img.js')(gulp);
 var gulpServer = require('./gulpfile_server.js')(gulp);
+var gulpCss = require('./gulpfile_css.js')(gulp, gulpServer.getBrowserSyncInstance);
+var gulpJs = require('./gulpfile_js.js')(gulp, gulpServer.getBrowserSyncInstance);
+var gulpImg = require('./gulpfile_img.js')(gulp);
+var tasksToCompleteBeforeBrowser = [];
+var tasksThatReloadBrowser = [];
+var startupTasks = [];
+var tkName;
 
 if (megaConf.css.active) {
     gulpCss.init(megaConf.css);
+    tkName = gulpCss.getTaskName();
+    tasksToCompleteBeforeBrowser.push(tkName);
+    tasksThatReloadBrowser.push(tkName);
+    startupTasks.push(tkName);
 }
 if (megaConf.js.active) {
     gulpJs.init(megaConf.js);
+    tkName = gulpJs = gulpJs.getTaskName();
+    tasksToCompleteBeforeBrowser.push(tkName);
+    tasksThatReloadBrowser.push(tkName);
+    startupTasks.push(tkName);
 }
 if (megaConf.img.active) {
     gulpImg.init(megaConf.img);
+    tkName = gulpImg.getTaskName();
+    startupTasks.push(tkName);
 }
 if (megaConf.browerSync.active) {
-    gulpServer.init(megaConf.browerSync, [gulpCss.getTaskName()], gulpCss.getTaskName());
+    gulpServer.init(megaConf.browerSync, tasksToCompleteBeforeBrowser, tasksThatReloadBrowser);
+    startupTasks.push(gulpServer.getTaskName());
 }
 
-gulp.task('default', [gulpCss.getTaskName(), gulpJs.getTaskName(), gulpImg.getTaskName(), gulpServer.getTaskName()], function () {
+gulp.task('default', startupTasks, function () {
 
 });

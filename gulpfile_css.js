@@ -3,7 +3,6 @@ var autoprefixer = require('gulp-autoprefixer');
 var minify = require('gulp-minify-css');
 var rename = require('gulp-rename');
 var less = require('gulp-less');
-
 var mainTaskName = 'css';
 
 /*************************************************/
@@ -13,7 +12,7 @@ var mainTaskName = 'css';
 /*************************************************/
 
 
-module.exports = function (gulp) {
+module.exports = function (gulp, getBrowserSyncInstance) {
     return {
         init: function (conf) {
             gulp.task(mainTaskName, function () {
@@ -25,7 +24,7 @@ module.exports = function (gulp) {
                 stream = cssConf.minify ? stream.pipe(minify()) : stream;
                 stream = cssConf.renameToMin ? stream.pipe(rename({extname: '.min.css'})) : stream;
                 stream = stream.pipe(gulp.dest(cssConf.destPath));
-                //stream = megaConf.browerSync.active && megaConf.browerSync.streamCss ? stream.pipe(browserSync.stream()) : stream;
+                stream = conf.streamCss ? stream.pipe(getBrowserSyncInstance().stream()) : stream;
                 return stream;
             });
             var cssWatcher = gulp.watch(conf.watchPath, [mainTaskName]);

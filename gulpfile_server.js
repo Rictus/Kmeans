@@ -11,7 +11,6 @@ module.exports = function (gulp) {
         init: function (conf, tasksToCompleteBeforeLoad, tasksThatReload) {
             tasksToCompleteBeforeLoad = tasksToCompleteBeforeLoad && typeof tasksToCompleteBeforeLoad === "object" && tasksToCompleteBeforeLoad.length > 0 ? tasksToCompleteBeforeLoad : [];
             browserSync = browserSync.create();
-
             gulp.task(mainTaskName, tasksToCompleteBeforeLoad, function () {
                 var browserSyncConf = conf;
                 if (browserSyncConf.active) {
@@ -28,17 +27,21 @@ module.exports = function (gulp) {
                             forms: true,
                             scroll: true
                         },
-                        browser: browserSyncConf.browsers
+                        browser: browserSyncConf.browsers,
+                        reloadDelay: 1000
                     });
                 }
             });
-            if (tasksThatReload&& tasksThatReload.length > 0)
-                gulp.task('reloadOn', conf.reloadOnTasks, browserSync.reload);
+            if (tasksThatReload && tasksThatReload.length > 0)
+                gulp.task('css-watch',  tasksThatReload, browserSync.reload);
             else
                 console.error("Type of 3nd arg is incorrect : ");
         },
-        getTaskName: function(){
+        getTaskName: function () {
             return mainTaskName;
+        },
+        getBrowserSyncInstance: function () {
+            return browserSync;
         }
     }
 };

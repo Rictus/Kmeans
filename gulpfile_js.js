@@ -9,7 +9,7 @@ var mainTaskName = 'js';
 /*************************************************/
 
 
-module.exports = function (gulp) {
+module.exports = function (gulp, getBrowserSyncInstance) {
     return {
         init: function (conf) {
             gulp.task(mainTaskName, function () {
@@ -20,7 +20,7 @@ module.exports = function (gulp) {
                     stream = jsConf.concat ? stream.pipe(concat(jsConf.concatedFilename)) : stream;
                     stream = jsConf.uglify ? stream.pipe(uglify()) : stream;
                     stream = stream.pipe(gulp.dest(jsConf.destPath));
-                    //stream = megaConf.browerSync.active && megaConf.browerSync.streamJs ? stream.pipe(browserSync.stream()) : stream;
+                    stream = jsConf.streamJs ? stream.pipe(getBrowserSyncInstance().stream()) : stream;
                     return stream;
                 }
             });
