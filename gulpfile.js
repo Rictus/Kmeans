@@ -1,24 +1,22 @@
-var browserSync = require('browser-sync').create();
-var less = require('gulp-less');
-var rename = require('gulp-rename');
-var autoprefixer = require('gulp-autoprefixer');
-var minify = require('gulp-minify-css');
 var gulp = require('gulp');
-var uglify = require('gulp-uglify');
-var concat = require('gulp-concat');
-var imagemin = require('gulp-imagemin');
 
-
-var conf = {
+var megaConf = {
     css: {
         active: true,
         watchPath: "./dev/css/**/*.less",
         destPath: "./public/css/",
         renameToMin: true,
-        minify: true,
         autoprefix: true,
         autoprefixString: '> 1%',
-        less: true
+        less: true,
+        dev: {//TODO
+            destPath: "./dev/css/",
+            reorderProperties: true
+        },
+        prod: {//TODO
+            minify: true,
+            destPath: "./public/css/"
+        }
     },
     js: {
         active: true,
@@ -40,125 +38,29 @@ var conf = {
         baseDir: "./",
         indexUrl: "./index_color.html",
         serverPort: 3001,
-        browers: ["google chrome"]
+        browsers: ["google chrome"],
+        reloadOnTasks: []
     }
 };
 
-var watcherChangeHandler = function (event) {
-    console.log(" ");
-    console.log("File " + event.path + " was " + event.type + ", runnings tasks...");
-};
+var gulpCss = require('./gulpfile_css.js')(gulp);
+var gulpJs = require('./gulpfile_js.js')(gulp);
+var gulpImg = require('./gulpfile_img.js')(gulp);
+var gulpServer = require('./gulpfile_server.js')(gulp);
 
-var activeTasksArray = [];
-if (conf.css.active) {
-    activeTasksArray.push('css');
+if (megaConf.css.active) {
+    gulpCss.init(megaConf.css);
 }
-if (conf.js.active) {
-    activeTasksArray.push('js');
+if (megaConf.js.active) {
+    gulpJs.init(megaConf.js);
 }
-if (conf.img.active) {
-    activeTasksArray.push('img');
+if (megaConf.img.active) {
+    gulpImg.init(megaConf.img);
 }
-if (conf.browerSync.active) {
-    activeTasksArray.push('serve');
+if (megaConf.browerSync.active) {
+    gulpServer.init(megaConf.browerSync, [gulpCss.getTaskName()], gulpCss.getTaskName());
 }
-gulp.task('default', activeTasksArray);
 
-/*************************************************/
-//
-//                    C S S
-//
-/*************************************************/
+gulp.task('default', [gulpCss.getTaskName(), gulpJs.getTaskName(), gulpImg.getTaskName(), gulpServer.getTaskName()], function () {
 
-gulp.task('css', function () {
-    var cssConf = conf.css;
-    if (cssConf.active) {
-        var stream;
-        stream = gulp.src(cssConf.watchPath);
-        stream = cssConf.less ? stream.pipe(less()) : stream;
-        stream = cssConf.autoprefix ? stream.pipe(autoprefixer(cssConf.autoprefixString)) : stream;
-        stream = cssConf.minify ? stream.pipe(minify()) : stream;
-        stream = cssConf.renameToMin ? stream.pipe(rename({extname: '.min.css'})) : stream;
-        stream = stream.pipe(gulp.dest(cssConf.destPath));
-        stream = conf.browerSync.active && conf.browerSync.streamCss ? stream.pipe(browserSync.stream()) : stream;
-        return stream;
-    }
 });
-if (conf.css.active) {
-    var cssWatcher = gulp.watch(conf.css.watchPath, ['css']);
-    cssWatcher.on('change', watcherChangeHandler);
-}
-
-
-/*************************************************/
-//
-//                    J S
-//
-/*************************************************/
-gulp.task('js', function () {
-    var jsConf = conf.js;
-    var stream;
-    if (jsConf.active) {
-        stream = gulp.src(jsConf.watchPath);
-        stream = jsConf.concat ? stream.pipe(concat(jsConf.concatedFilename)) : stream;
-        stream = jsConf.uglify ? stream.pipe(uglify()) : stream;
-        stream = stream.pipe(gulp.dest(jsConf.destPath));
-        stream = conf.browerSync.active && conf.browerSync.streamJs ? stream.pipe(browserSync.stream()) : stream;
-        return stream;
-    }
-});
-var jsWatcher = gulp.watch(conf.js.watchPath, ['js']);
-if (conf.js.active) {
-    jsWatcher.on('change', watcherChangeHandler);
-}
-
-/*************************************************/
-//
-//                    I M G
-//
-/*************************************************/
-gulp.task('img', function () {
-    var imgConf = conf.img;
-    var stream;
-    if (imgConf.active) {
-        stream = gulp.src(imgConf.watchPath);
-        stream = stream.pipe(imagemin());
-        stream = stream.pipe(gulp.dest(imgConf.destPath));
-        return stream;
-    }
-});
-
-var imgWatcher = gulp.watch(conf.img.watchPath, ['img']);
-if (conf.img.active) {
-    imgWatcher.on('change', watcherChangeHandler);
-}
-
-/*************************************************/
-//
-//                    Browser auto-reload
-//
-/*************************************************/
-gulp.task('serve', ['css'], function () {
-    var browserSyncConf = conf.browerSync;
-    var stream;
-    if (browserSyncConf.active) {
-        browserSync.init({
-            server: {
-                baseDir: browserSyncConf.baseDir,
-                index: browserSyncConf.indexUrl
-            },
-            ui: {
-                port: browserSyncConf.serverPort
-            },
-            ghostMode: {
-                clicks: true,
-                forms: true,
-                scroll: true
-            },
-            browser: browserSyncConf.browsers
-        });
-    }
-});
-if (conf.browerSync.active) {
-    gulp.task('css-watch', ['css'], browserSync.reload);
-}
