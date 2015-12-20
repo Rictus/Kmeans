@@ -5,39 +5,39 @@ var megaConf = {
     css: {
         active: true,
         streamCss: true,
-        watchPath: "./dev/css/**/*.less",
-        destPath: "./public/css/",
+        watchPath: "../dev/css/**/*.less",
+        destPath: "../public/css/",
         renameToMin: true,
         autoprefix: true,
         autoprefixString: '> 1%',
         less: true,
         dev: {//TODO dev
-            destPath: "./dev/css/",
+            destPath: "../dev/css/",
             reorderProperties: true
         },
         prod: {//TODO prod
             minify: true,
-            destPath: "./public/css/"
+            destPath: "../public/css/"
         }
     },
     js: {
         active: true,
         streamJs: true,
-        watchPath: "./dev/js/**/*.js",
-        destPath: "./public/js/",
+        watchPath: "../dev/js/**/*.js",
+        destPath: "../public/js/",
         concat: true,
         concatedFilename: 'global.min.js',
         uglify: true
     },
     img: {
         active: true,
-        watchPath: "./dev/img/**/*.{png,jpg,jpeg,gif,svg}",
-        destPath: "./public/img/"
+        watchPath: "../dev/img/**/*.{png,jpg,jpeg,gif,svg}",
+        destPath: "../public/img/"
     },
     browerSync: {
         active: true,
-        baseDir: "./",
-        indexUrl: "./index_color.html",
+        baseDir: "../",
+        indexUrl: "index_color.html",
         serverPort: 3001,
         browsers: ["google chrome"],
         reloadOnTasks: []
