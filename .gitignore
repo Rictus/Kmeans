@@ -1,8 +1,9 @@
 # Just launch npm install to get node_modules
 /node_modules
-# Just launch gulp to get public files
-/public/*/*
+# Just launch gulp to get dev-public/prod files
+/dev-public/*/*
+/dev-public/*.*
+/prod/*/*
+/prod/*.*
 # Who cares about these files but my own IDE ?
 .idea
-# I only work with Less files
-.css

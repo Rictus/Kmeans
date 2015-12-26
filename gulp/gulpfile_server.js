@@ -38,7 +38,7 @@ module.exports = function (gulp) {
             else
                 console.error("Type of 3nd arg is incorrect : ");
         },
-        getTaskName: function () {
+        getTasksNames: function () {
             return mainTaskName;
         },
         getBrowserSyncInstance: function () {

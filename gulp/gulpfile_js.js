@@ -1,7 +1,8 @@
 'use strict';
 var uglify = require('gulp-uglify');
 var concat = require('gulp-concat');
-var mainTaskName = 'js';
+var tasks = {};
+var tasksNames = [];
 /*************************************************/
 //
 //                    J S
@@ -10,25 +11,33 @@ var mainTaskName = 'js';
 
 
 module.exports = function (gulp, getBrowserSyncInstance) {
-    return {//TODO add default conf
+    function initJsTask(taskName, taskConf) {
+        var outStream = gulp.task(taskName, function () {
+            var stream;
+            if (taskConf.active) {
+                stream = gulp.src(taskConf.watchPath);
+                stream = taskConf.concat ? stream.pipe(concat(taskConf.concatedFilename)) : stream;
+                stream = taskConf.uglify ? stream.pipe(uglify()) : stream;
+                stream = stream.pipe(gulp.dest(taskConf.destPath));
+                stream = taskConf.streamJs ? stream.pipe(getBrowserSyncInstance().stream()) : stream;
+                return stream;
+            }
+        });
+        tasksNames.push(taskName);
+        gulp.watch(taskConf.watchPath, [taskName]);
+        return outStream;
+    }
+
+    return {
         init: function (conf) {
-            gulp.task(mainTaskName, function () {
-                var jsConf = conf;
-                var stream;
-                if (jsConf.active) {
-                    stream = gulp.src(jsConf.watchPath);
-                    stream = jsConf.concat ? stream.pipe(concat(jsConf.concatedFilename)) : stream;
-                    stream = jsConf.uglify ? stream.pipe(uglify()) : stream;
-                    stream = stream.pipe(gulp.dest(jsConf.destPath));
-                    stream = jsConf.streamJs ? stream.pipe(getBrowserSyncInstance().stream()) : stream;
-                    return stream;
+            for (var key in conf) {
+                if (conf.hasOwnProperty(key) && conf[key].active) {
+                    tasks[key] = initJsTask("js" + key, conf[key]);
                 }
-            });
-            var jsWatcher = gulp.watch(conf.watchPath, [mainTaskName]);
-            //jsWatcher.on('change', watcherChangeHandler);
+            }
         },
-        getTaskName: function() {
-            return mainTaskName;
+        getTasksNames: function () {
+            return tasksNames;
         }
     };
 };

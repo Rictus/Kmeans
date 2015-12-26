@@ -1,6 +1,7 @@
 'use strict';
 var imagemin = require('gulp-imagemin');
-var mainTaskName = 'img';
+var tasksNames = [];
+var tasks = {};
 /*************************************************/
 //
 //                    I M G
@@ -8,24 +9,30 @@ var mainTaskName = 'img';
 /*************************************************/
 
 module.exports = function (gulp) {
-    return {//TODO add default conf
-        init: function (conf) {
-            gulp.task(mainTaskName, function () {
-                var imgConf = conf;
-                var stream;
-                if (imgConf.active) {
-                    stream = gulp.src(imgConf.watchPath);
-                    stream = stream.pipe(imagemin());
-                    stream = stream.pipe(gulp.dest(imgConf.destPath));
-                    return stream;
-                }
-            });
+    function initImgTask(taskName, taskConf) {
+        gulp.task(taskName, function () {
+            var stream;
+            if (taskConf.active) {
+                stream = gulp.src(taskConf.watchPath);
+                stream = stream.pipe(imagemin());
+                stream = stream.pipe(gulp.dest(taskConf.destPath));
+                return stream;
+            }
+        });
+        tasksNames.push(taskName);
+        gulp.watch(taskConf.watchPath, [taskName]);
+    }
 
-            var imgWatcher = gulp.watch(conf.watchPath, [mainTaskName]);
-            //imgWatcher.on('change', function (e) {});
+    return {
+        init: function (conf) {
+            for (var key in conf) {
+                if (conf.hasOwnProperty(key) && conf[key].active) {
+                    tasks[key] = initImgTask("img" + key, conf[key]);
+                }
+            }
         },
-        getTaskName: function () {
-            return mainTaskName;
+        getTasksNames: function () {
+            return tasksNames;
         }
     }
 };

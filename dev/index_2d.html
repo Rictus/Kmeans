@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>K-means</title>
-    <link rel="stylesheet" href="./public/css/style.min.css"/>
+    <link rel="stylesheet" href="./css/style.min.css"/>
 </head>
 <body>
 <div class="twoDimensions">
@@ -31,7 +31,7 @@
 <!-- WIP : Ajouter boutons pour changer nbPoints, nbProtos-->
 <!-- WIP : Afficher KIterator et les groupes-->
 <!-- WIP : Eviter les couleurs trop similaires. Voir Delta E -->
-<script src="./public/js/global.min.js"></script>
+<script src="./js/global.min.js"></script>
 <script>
     window.onload = function () {
         var reloadButton = document.getElementById('reloadButton');
@@ -51,8 +51,8 @@
                 NB_PROTOS: parseInt(nbProtos.value, 10),
                 ACTIVE_ANIMATION: true,
                 ACTIVE_3D: false,
-                TIME_BEFORE_CALCUL: 1000, //ms
-                TIME_BETWEEN_ITERATIONS: 200
+                TIME_BEFORE_CALCUL: 10000, //ms
+                TIME_BETWEEN_ITERATIONS: 2000
             };
             new KMeans(mainParentElement, opt);
         }
