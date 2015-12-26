@@ -9,9 +9,8 @@ var gulpImg = require('./gulpfile_img.js')(gulp);
 var tasksToCompleteBeforeBrowser = [];
 var tasksThatReloadBrowser = [];
 var startupTasks = [];
-var tksName;
 var tksNames;
-var megaConf = { //TODO HTML
+var megaConf = {
     css: {
         module: gulpCss,
         dev: {
@@ -85,50 +84,34 @@ var megaConf = { //TODO HTML
             destPath: "../prod/",
             minify: true
         }
-    },
-    browerSync: {
-        active: true,
-        baseDir: "../dev-public/",
-        indexUrl: "index_color.html",
-        serverPort: 3001,
-        browsers: ["google chrome"],
-        reloadOnTasks: []
     }
+};
+
+var browerSync = {
+    active: true,
+    baseDir: "../prod/",
+    indexUrl: "index_color.html",
+    serverPort: 3001,
+    browsers: ["google chrome"],
+    reloadOnTasks: []
 };
 
 
 ///loop through confs
 
+for (var key in megaConf) {
+    if (megaConf.hasOwnProperty(key)) {
+        var responsibleModule = megaConf[key].module;
+        responsibleModule.init(megaConf[key]);
+        tksNames = responsibleModule.getTasksNames();
+        tasksToCompleteBeforeBrowser = tasksToCompleteBeforeBrowser.concat(tksNames);
+        tasksThatReloadBrowser = tasksThatReloadBrowser.concat(tksNames);
+        startupTasks = startupTasks.concat(tksNames);
+    }
+}
 
-gulpHtml.init(megaConf.html);
-tksNames = gulpHtml.getTasksNames();
-tasksToCompleteBeforeBrowser = tasksToCompleteBeforeBrowser.concat(tksNames);
-tasksThatReloadBrowser = tasksThatReloadBrowser.concat(tksNames);
-startupTasks = startupTasks.concat(tksNames);
-
-
-gulpCss.init(megaConf.css);
-tksNames = gulpCss.getTasksNames();
-tasksToCompleteBeforeBrowser = tasksToCompleteBeforeBrowser.concat(tksNames);
-tasksThatReloadBrowser = tasksThatReloadBrowser.concat(tksNames);
-startupTasks = startupTasks.concat(tksNames);
-
-
-gulpJs.init(megaConf.js);
-tksNames = gulpJs.getTasksNames();
-tasksToCompleteBeforeBrowser = tasksToCompleteBeforeBrowser.concat(tksNames);
-tasksThatReloadBrowser = tasksThatReloadBrowser.concat(tksNames);
-startupTasks = startupTasks.concat(tksNames);
-
-
-gulpImg.init(megaConf.img);
-tksNames = gulpImg.getTasksNames();
-tasksToCompleteBeforeBrowser = tasksToCompleteBeforeBrowser.concat(tksNames);
-startupTasks = startupTasks.concat(tksNames);
-
-
-if (megaConf.browerSync.active) {
-    gulpServer.init(megaConf.browerSync, tasksToCompleteBeforeBrowser, tasksThatReloadBrowser);
+if (browerSync.active) {
+    gulpServer.init(browerSync, tasksToCompleteBeforeBrowser, tasksThatReloadBrowser);
     startupTasks.push(gulpServer.getTasksNames());
 }
 
