@@ -1,5 +1,5 @@
 'use strict';
-var imagemin = require('gulp-imagemin');
+
 var tasksNames = [];
 var tasks = {};
 /*************************************************/
@@ -10,6 +10,7 @@ var tasks = {};
 
 module.exports = function (gulp) {
     function initImgTask(taskName, taskConf) {
+        var imagemin = require('gulp-imagemin');
         gulp.task(taskName, function () {
             var stream;
             if (taskConf.active) {

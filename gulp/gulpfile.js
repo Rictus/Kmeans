@@ -12,13 +12,14 @@ var startupTasks = [];
 var tksNames;
 var megaConf = {
     css: {
+        active: false,
         module: gulpCss,
         dev: {
             active: true,
-            streamCss: true,
+            streamCss: false,
             watchPath: "../dev/css/**/*.less",
             destPath: "../dev-public/css/",
-            renameToMin: true,
+            concat: false,
             autoprefix: true,
             autoprefixString: '> 1%',
             less: true,
@@ -29,7 +30,8 @@ var megaConf = {
             streamCss: false,
             watchPath: "../dev/css/**/*.less",
             destPath: "../prod/css/",
-            renameToMin: true,
+            renameTo: "style.min.css",
+            concat: true,
             autoprefix: true,
             autoprefixString: '> 1%',
             less: true,
@@ -37,6 +39,7 @@ var megaConf = {
         }
     },
     js: {
+        active: false,
         module: gulpJs,
         dev: {
             active: true,
@@ -44,7 +47,7 @@ var megaConf = {
             watchPath: "../dev/js/**/*.js",
             destPath: "../dev-public/js/",
             concat: true,
-            concatedFilename: 'global.min.js',
+            renameTo: 'global.min.js',
             uglify: false
         },
         prod: {
@@ -53,11 +56,12 @@ var megaConf = {
             watchPath: "../dev/js/**/*.js",
             destPath: "../prod/js/",
             concat: true,
-            concatedFilename: 'global.min.js',
+            renameTo: 'global.min.js',
             uglify: true
         }
     },
     img: {
+        active: false,
         module: gulpImg,
         dev: {
             active: true,
@@ -71,15 +75,18 @@ var megaConf = {
         }
     },
     html: {
+        active: false,
         module: gulpHtml,
         dev: {
             active: true,
+            streamHTML: true,
             watchPath: "../dev/*.html",
             destPath: "../dev-public/",
             minify: false
         },
         prod: {
             active: true,
+            streamHTML: true,
             watchPath: "../dev/*.html",
             destPath: "../prod/",
             minify: true
@@ -100,7 +107,7 @@ var browerSync = {
 ///loop through confs
 
 for (var key in megaConf) {
-    if (megaConf.hasOwnProperty(key)) {
+    if (megaConf.hasOwnProperty(key) && megaConf[key].active) {
         var responsibleModule = megaConf[key].module;
         responsibleModule.init(megaConf[key]);
         tksNames = responsibleModule.getTasksNames();

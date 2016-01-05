@@ -1,6 +1,5 @@
 'use strict';
-var uglify = require('gulp-uglify');
-var concat = require('gulp-concat');
+
 var tasks = {};
 var tasksNames = [];
 /*************************************************/
@@ -12,11 +11,13 @@ var tasksNames = [];
 
 module.exports = function (gulp, getBrowserSyncInstance) {
     function initJsTask(taskName, taskConf) {
+        var uglify = require('gulp-uglify');
+        var concat = require('gulp-concat');
         var outStream = gulp.task(taskName, function () {
             var stream;
             if (taskConf.active) {
                 stream = gulp.src(taskConf.watchPath);
-                stream = taskConf.concat ? stream.pipe(concat(taskConf.concatedFilename)) : stream;
+                stream = taskConf.concat ? stream.pipe(concat(taskConf.renameTo)) : stream;
                 stream = taskConf.uglify ? stream.pipe(uglify()) : stream;
                 stream = stream.pipe(gulp.dest(taskConf.destPath));
                 stream = taskConf.streamJs ? stream.pipe(getBrowserSyncInstance().stream()) : stream;

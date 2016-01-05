@@ -1,5 +1,6 @@
 'use strict';
-var browserSync = require('browser-sync');
+
+var browserSync;
 var mainTaskName = 'serve';
 /*************************************************/
 //
@@ -8,8 +9,8 @@ var mainTaskName = 'serve';
 /*************************************************/
 module.exports = function (gulp) {
     return {
-        //TODO add default conf
         init: function (conf, tasksToCompleteBeforeLoad, tasksThatReload) {
+            browserSync = require('browser-sync');
             tasksToCompleteBeforeLoad = tasksToCompleteBeforeLoad && typeof tasksToCompleteBeforeLoad === "object" && tasksToCompleteBeforeLoad.length > 0 ? tasksToCompleteBeforeLoad : [];
             browserSync = browserSync.create();
             gulp.task(mainTaskName, tasksToCompleteBeforeLoad, function () {
@@ -34,7 +35,7 @@ module.exports = function (gulp) {
                 }
             });
             if (tasksThatReload && tasksThatReload.length > 0)
-                gulp.task('css-watch',  tasksThatReload, browserSync.reload);
+                gulp.task('css-watch', tasksThatReload, browserSync.reload);
             else
                 console.error("Type of 3nd arg is incorrect : ");
         },

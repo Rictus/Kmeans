@@ -1,7 +1,5 @@
 'use strict';
-var minify = require('gulp-minify-css');
-var rename = require('gulp-rename');
-var htmlmin = require('gulp-htmlmin');
+
 var tasks = {};
 var tasksNames = [];
 /*************************************************/
@@ -27,11 +25,14 @@ var htmlminConf = {
 
 module.exports = function (gulp, getBrowserSyncInstance) {
     function initHTMLTask(taskName, taskConf) {
+        var minify = require('gulp-minify-css');
+        var htmlmin = require('gulp-htmlmin');
         var outStream = gulp.task(taskName, function () {
             var stream;
             stream = gulp.src(taskConf.watchPath);
             stream = taskConf.minify ? stream.pipe(htmlmin(htmlminConf)) : stream;
             stream = stream.pipe(gulp.dest(taskConf.destPath));
+            stream = taskConf.streamHTML ? stream.pipe(getBrowserSyncInstance().stream()) : stream;
             return stream;
         });
         tasksNames.push(taskName);
