@@ -9,7 +9,7 @@ function Coordinate(position) {
 
     var getStringPosition = function (position) {
         if (isNumberRegex.test(position)) {
-            that.posX = parseFloat(position);
+            return parseFloat(position);
         } else {
             console.error("Unparsable number : " + position);
         }
