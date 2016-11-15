@@ -36,8 +36,6 @@ module.exports = function (gulp) {
             });
             if (tasksThatReload && tasksThatReload.length > 0)
                 gulp.task('css-watch', tasksThatReload, browserSync.reload);
-            else
-                console.error("Type of 3nd arg is incorrect : ");
         },
         getTasksNames: function () {
             return mainTaskName;

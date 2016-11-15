@@ -52,6 +52,6 @@ function KMeans(mainParentElement, userOptions, onDone) {
 
     //mainParentElement.innerHTML = "";
     readOptions();
-    var coordinate = new Coordinate(mainParentElement);
+    var coordinate = new CoordinateTable(mainParentElement);
     setTimeout(loops, Options.TIME_BEFORE_CALCUL);
 }

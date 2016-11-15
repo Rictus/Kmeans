@@ -171,3 +171,43 @@ function decimalAdjust(type, value, exp) {
     value = value.toString().split('e');
     return +(value[0] + 'e' + (value[1] ? (+value[1] + exp) : exp));
 }
+
+function isHTMLElement(obj) {
+    try {
+        //Using W3 DOM2 (works for FF, Opera and Chrome)
+        return obj instanceof HTMLElement;
+    }
+    catch (e) {
+        //Browsers not supporting W3 DOM2 don't have HTMLElement and
+        //an exception is thrown and we end up here. Testing some
+        //properties that all elements have. (works on IE7)
+        return (typeof obj === "object") &&
+            (obj.nodeType === 1) && (typeof obj.style === "object") &&
+            (typeof obj.ownerDocument === "object");
+    }
+}
+
+function mergeObjects() {
+    var that = this;
+    var destination = {},
+        sources = [].slice.call(arguments, 0);
+    sources.forEach(function (source) {
+        var prop;
+        for (prop in source) {
+            if (prop in destination && Array.isArray(destination[prop])) {
+                // Concat Arrays
+                destination[prop] = destination[prop].concat(source[prop]);
+
+            } else if (prop in destination && typeof destination[prop] === "object") {
+                // Merge Objects
+                destination[prop] = that.mergeObjects(destination[prop], source[prop]);
+
+            } else {
+                // Set new values
+                destination[prop] = source[prop];
+
+            }
+        }
+    });
+    return destination;
+}

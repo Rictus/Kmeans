@@ -12,7 +12,7 @@ var startupTasks = [];
 var tksNames;
 var megaConf = {
     css: {
-        active: false,
+        active: true,
         module: gulpCss,
         dev: {
             active: true,
@@ -39,7 +39,7 @@ var megaConf = {
         }
     },
     js: {
-        active: false,
+        active: true,
         module: gulpJs,
         dev: {
             active: true,
@@ -61,7 +61,7 @@ var megaConf = {
         }
     },
     img: {
-        active: false,
+        active: true,
         module: gulpImg,
         dev: {
             active: true,
@@ -75,7 +75,7 @@ var megaConf = {
         }
     },
     html: {
-        active: false,
+        active: true,
         module: gulpHtml,
         dev: {
             active: true,
@@ -97,8 +97,8 @@ var megaConf = {
 var browerSync = {
     active: true,
     baseDir: "../prod/",
-    indexUrl: "index_color.html",
-    serverPort: 3001,
+    indexUrl: "index_3d.html",
+    serverPort: 9031,
     browsers: ["google chrome"],
     reloadOnTasks: []
 };
