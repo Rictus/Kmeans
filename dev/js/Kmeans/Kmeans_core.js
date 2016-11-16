@@ -7,7 +7,7 @@ function KMeans(opts) {
         data: [],
         /**
          * Every element should be an instance of Coordinate and have same position notations as data
-         *///TODO : Give the ability to start with random centers
+         *///TODO : Give the ability to start with random centers based on collected min/max
         centerPositions: [],
         /**
          * Keys to get coordinates in a Coordinate object
@@ -43,12 +43,13 @@ function KMeans(opts) {
             console.groupEnd();
         },
         /**
-         * Called when a step is completed
+         * Called when a step is completed. Call the callback function to start the next step
          */
-        onStepDone: function (currentDataState, stepNth) {
+        onStepDone: function (currentDataState, stepNth, cb) {
             console.groupCollapsed("Step number " + stepNth + " done.");
             console.log(currentDataState);
             console.groupEnd();
+            cb();
         },
         /**
          * Function called before the first step
@@ -79,7 +80,8 @@ function KMeans(opts) {
             centers[idxClosestCenter].membership.push(curPoint);
         }
     };
-    var computeCenterMovements = function () {
+
+    var computeCentersMovements = function () {
         // For each center, calculate the movement needed to match the membership barycenter
         for (var c = 0; c < centers.length; c++) {
             var curCenter = centers[c];
@@ -94,7 +96,7 @@ function KMeans(opts) {
                 }
                 centers[c].nextPosition[coordName] = sum / centers[c].membership.length;
             }
-            // Calculate movement
+            // Calculate movement and save biggest one
             centers[c].movementDistance = options.distanceFunction(centers[c], centers[c].nextPosition);
             if (maxCenterMovementDistance < centers[c].movementDistance) {
                 maxCenterMovementDistance = centers[c].movementDistance;
@@ -102,7 +104,7 @@ function KMeans(opts) {
         }
     };
 
-    var makeCentersMovement = function () {
+    var makeCentersMovements = function () {
         for (var c = 0; c < centers.length; c++) {
             for (var cn = 0; cn < options.coordinateNames.length; cn++) {
                 var coordName = options.coordinateNames[cn];
@@ -110,23 +112,25 @@ function KMeans(opts) {
             }
         }
     };
+
     var loop = function () {
         options.onStepStart(points, stepNth);
         findPointCenters();
 
-        computeCenterMovements();
+        computeCentersMovements();
 
         if (maxCenterMovementDistance > options.centerThresholdMovement) {
-            makeCentersMovement();
+            makeCentersMovements();
             flushStep();
-            options.onStepDone(points, stepNth);
-            stepNth++;
-            if (options.maxIteration < 0 || stepNth > options.maxIteration) {
-                // Algorithm is done.
-                options.onDone(points, stepNth);
-            } else {
-                loop();
-            }
+            options.onStepDone(points, stepNth, function () {
+                stepNth++;
+                if (options.maxIteration < 0 || stepNth > options.maxIteration) {
+                    // Algorithm is done.
+                    options.onDone(points, stepNth);
+                } else {
+                    loop();
+                }
+            });
         } else {
             // Algorithm is done.
             options.onDone(points, stepNth);
