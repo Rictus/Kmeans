@@ -7,7 +7,8 @@ function KMeans(opts) {
         data: [],
         /**
          * Every element should be an instance of Coordinate and have same position notations as data
-         *///TODO : Give the ability to start with random centers based on collected min/max
+         *///TODO : Give the ability to start with random center positions
+        // TODO based on collected min/max and on given amount of centers
         centerPositions: [],
         /**
          * Keys to get coordinates in a Coordinate object
