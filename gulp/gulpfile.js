@@ -44,7 +44,7 @@ var megaConf = {
         dev: {
             active: true,
             streamJs: true,
-            watchPath: "../dev/js/**/*.js",
+            watchPath: ["../bower_components/d3/d3.min.js","../dev/js/**/*.js"],
             destPath: "../dev-public/js/",
             concat: true,
             renameTo: 'global.min.js',
@@ -53,7 +53,7 @@ var megaConf = {
         prod: {
             active: true,
             streamJs: false,
-            watchPath: "../dev/js/**/*.js",
+            watchPath: ["../bower_components/d3/d3.min.js","../dev/js/**/*.js"],
             destPath: "../prod/js/",
             concat: true,
             renameTo: 'global.min.js',
@@ -97,7 +97,7 @@ var megaConf = {
 var browerSync = {
     active: true,
     baseDir: "../prod/",
-    indexUrl: "index_3d.html",
+    indexUrl: "index_2dv2.html",
     serverPort: 9031,
     browsers: ["google chrome"],
     reloadOnTasks: []
@@ -123,5 +123,5 @@ if (browerSync.active) {
 }
 
 gulp.task('default', startupTasks, function () {
-    console.log(startupTasks);
+    // console.log(startupTasks);
 });

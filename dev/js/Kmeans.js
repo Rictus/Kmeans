@@ -24,9 +24,8 @@ function KMeans(mainParentElement, userOptions, onDone) {
             curProto.emptyMembership();
         }
 
-
         if (cummulatedMoveDistance == 0) {
-            if(typeof onDone === "function") {
+            if (typeof onDone === "function") {
                 onDone();
             }
         } else if (Options.ACTIVE_ANIMATION) {

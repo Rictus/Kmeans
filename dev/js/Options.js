@@ -9,7 +9,7 @@ var Options = {
     NB_PROTOS: 18,
     ACTIVE_ANIMATION: true,
     ACTIVE_3D: true,
-    TIME_BEFORE_CALCUL: 1000, //ms
-    TIME_BETWEEN_ITERATIONS: 1000, //ms
+    TIME_BEFORE_CALCUL: 100, //ms
+    TIME_BETWEEN_ITERATIONS: 400, //ms
     ENABLE_LOG: false
 };

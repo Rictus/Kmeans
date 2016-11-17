@@ -1,0 +1,20 @@
+{
+  "name": "kmeans",
+  "description": "",
+  "main": "",
+  "authors": [
+    "Dylan Leroux <contact.dylanleroux@gmail.com>"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/Rictus/Kmeans",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "d3": "^4.3.0"
+  }
+}

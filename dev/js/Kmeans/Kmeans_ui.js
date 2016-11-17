@@ -12,7 +12,7 @@ function KmeansUI(element, options) {
         d.push(new Coordinate({"x": x, "y": y}))
     }
 
-    new KMeans({
+    var a = new KMeans_core({
         data: d,
         centerPositions: [new Coordinate({x: rand(0, 1000), y: rand(0, 1000)})],
         coordinateNames: ["x", "y"],
@@ -31,4 +31,36 @@ function KmeansUI(element, options) {
             setTimeout(cb, 1000);
         }
     });
+
+    var opts = {
+        /**
+         * Data given to Kmeans_core.js
+         */
+        data: [],
+        /**
+         * Keys to get coordinates in a Coordinate object
+         */
+        coordinateNames: ["x", "y"],
+        /**
+         * Define timers to throttle events
+         */
+        time: {
+            beforeFirstStep: 1000,
+            betweenStep: 1000
+        }
+    };
+
+
+    var initUI = function (container) {
+        var d = d3.select(container);
+
+    };
+
+    var check = function () {
+        if (typeof d3 !== "object") {
+            console.error("d3 library is not loaded.");
+        } else {
+            initUI(); //TODO ADD CONTAINER
+        }
+    };
 }

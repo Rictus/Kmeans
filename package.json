@@ -1,6 +1,12 @@
 {
   "name": "kmeans",
   "version": "1.0.0",
+  "scripts": {
+    "postinstall": "bower i",
+    "start": "gulp --color --gulpfile ./gulp/gulpfile.js default"
+  },
+  "repository": "https://github.com/Rictus/Kmeans.git",
+  "license": "MIT",
   "devDependencies": {
     "browser-sync": "^2.9.11",
     "gulp": "^3.9.0",

@@ -1,5 +1,5 @@
 'use strict';
-function KMeans(opts) {
+function KMeans_core(opts) {
     var defaultsOptions = {
         /**
          * Every element should be an instance of Coordinate and  have same position notations as centerPositions
@@ -206,8 +206,11 @@ function KMeans(opts) {
         return true;
     };
 
-    if (check() === true) {
-        options.onStart();
-        loop();
-    }
+    this.launch = function () {
+        if (check() === true) {
+            options.onStart();
+            loop();
+        }
+    };
 }
+
